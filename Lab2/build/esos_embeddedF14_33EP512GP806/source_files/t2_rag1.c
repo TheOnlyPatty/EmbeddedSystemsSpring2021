@@ -23,15 +23,14 @@ ESOS_USER_TASK(state_machine) {
     while(TRUE) {
         state[NORTH_SOUTH] = RED;
         state[EAST_WEST] = GREEN;
-        ESOS_TASK_WAIT_TICKS(20000); // Wait for 10s
-            // (is this correct? Referenced from the example heartbeat code which said a wait for 500 was a wait for 250ms
+        ESOS_TASK_WAIT_TICKS(10000); // Wait for 10s
         state[EAST_WEST] = AMBER;
-        ESOS_TASK_WAIT_TICKS(6000); // Wait for 3s
+        ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
         state[NORTH_SOUTH] = GREEN;
         state[EAST_WEST] = RED;
-        ESOS_TASK_WAIT_TICKS(20000); // Wait for 10s
+        ESOS_TASK_WAIT_TICKS(10000); // Wait for 10s
         state[NORTH_SOUTH] = AMBER;
-        ESOS_TASK_WAIT_TICKS(6000); // Wait for 3s
+        ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
     }
     ESOS_TASK_END();
 }

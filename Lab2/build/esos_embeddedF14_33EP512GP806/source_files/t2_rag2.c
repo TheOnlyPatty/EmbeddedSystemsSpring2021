@@ -20,17 +20,43 @@ uint8_t state[2];
 
 ESOS_USER_TASK(state_machine) {
     ESOS_TASK_BEGIN();
+	
     while(TRUE) {
-        state[NORTH_SOUTH] = RED;
-        state[EAST_WEST] = GREEN;
-        ESOS_TASK_WAIT_TICKS(10000); // Wait for 10s
-        state[EAST_WEST] = AMBER;
-        ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
-        state[NORTH_SOUTH] = GREEN;
-        state[EAST_WEST] = RED;
-        ESOS_TASK_WAIT_TICKS(10000); // Wait for 10s
-        state[NORTH_SOUTH] = AMBER;
-        ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
+		if(SW1_PRESSED){
+			state[NORTH_SOUTH] = RED;
+			state[EAST_WEST] = GREEN;
+			ESOS_TASK_WAIT_TICKS(30000); // Wait for 30s
+		
+			state[EAST_WEST] = AMBER;
+			ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
+		
+  
+			state[EAST_WEST] = RED;
+			ESOS_TASK_WAIT_TICKS(1000); // Wait for 1s
+		
+			state[NORTH_SOUTH] = GREEN;
+			ESOS_TASK_WAIT_TICKS(30000); // Wait for 30s
+		
+			state[NORTH_SOUTH] = AMBER;
+			ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
+		
+
+			state[NORTH_SOUTH] = RED;
+			ESOS_TASK_WAIT_TICKS(1000); // Wait for 3s
+		}
+		else{
+			
+			state[NORTH_SOUTH] = RED;
+			state[EAST_WEST] = GREEN;
+			ESOS_TASK_WAIT_TICKS(10000); // Wait for 10s
+			state[EAST_WEST] = AMBER;
+			ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
+			state[NORTH_SOUTH] = GREEN;
+			state[EAST_WEST] = RED;
+			ESOS_TASK_WAIT_TICKS(10000); // Wait for 10s
+			state[NORTH_SOUTH] = AMBER;
+			ESOS_TASK_WAIT_TICKS(3000); // Wait for 3s
+		}
     }
     ESOS_TASK_END();
 }
@@ -70,6 +96,7 @@ void user_init()
     CONFIG_LED2();
     CONFIG_LED3();
     CONFIG_SW3();
+	CONFIG_SW1();
     
     esos_RegisterTask(state_machine);
     esos_RegisterTask(display_switcher);

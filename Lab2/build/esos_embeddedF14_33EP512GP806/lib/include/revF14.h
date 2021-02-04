@@ -6,13 +6,13 @@
 // based on example files given in pic24lib_all folder
 
 #define CONFIG_LED1() CONFIG_RF4_AS_DIG_OUTPUT()
-#define LED1  (_LATF4) //led1 state?
+#define LED1  (_LATF4) //green led
 
 #define CONFIG_LED2() CONFIG_RB14_AS_DIG_OUTPUT()
-#define LED2  (_LATB14) //led2 state?
+#define LED2  (_LATB14) //yellow led
 
 #define CONFIG_LED3() CONFIG_RB15_AS_DIG_OUTPUT()
-#define LED3  (_LATB15) // led3 state?
+#define LED3  (_LATB15) // red led
 
 
 
