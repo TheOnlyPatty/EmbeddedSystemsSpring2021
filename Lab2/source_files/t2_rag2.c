@@ -46,7 +46,7 @@ ESOS_USER_TASK(state_machine) {
         ESOS_TASK_WAIT_TICKS(3000) // Wait for 3s
         
         if(SW1_PRESSED) {
-            state[EAST_WEST] = RED;
+            state[NORTH_SOUTH] = RED;
             ESOS_TASK_WAIT_TICKS(1000) // Wait for 1s
         }
     }
