@@ -44,17 +44,17 @@ ESOS_USER_TASK(display_switcher) {
         else curr_state = EAST_WEST;
         
         if(state[curr_state] == RED) { // Turn on red LED and turn off others
-            RED_LED = 1;
+            RED_LED = 0;
             AMBER_LED = 0;
             GREEN_LED = 0;
         }
         else if(state[curr_state] == AMBER) { // Turn on amber LED and turn off others
-            RED_LED = 0;
+            RED_LED = 1;
             AMBER_LED = 1;
             GREEN_LED = 0;
         }
         else if(state[curr_state] == GREEN) { // Turn on green LED and turn off others
-            RED_LED = 0;
+            RED_LED = 1;
             AMBER_LED = 0;
             GREEN_LED = 1;
         }
