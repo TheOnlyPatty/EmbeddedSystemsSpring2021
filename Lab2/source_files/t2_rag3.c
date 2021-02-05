@@ -23,9 +23,11 @@ ESOS_USER_TASK(state_machine) {
     ESOS_TASK_BEGIN();
     while(TRUE) {
         state[NORTH_SOUTH] = RED;
-        state[EAST_WEST] = TURN;
-        
-        ESOS_TASK_WAIT_TICKS(10000) // Wait for 10s
+        if(SW2_PRESSED) {
+            state[EAST_WEST] = TURN;
+            ESOS_TASK_WAIT_TICKS(10000) // Wait for 10s
+        }
+        else state[EAST_WEST] = RED;
         
         state[EAST_WEST] = GREEN;
         
@@ -41,10 +43,13 @@ ESOS_USER_TASK(state_machine) {
             ESOS_TASK_WAIT_TICKS(1000) // Wait for 1s
         }
         
-        state[NORTH_SOUTH] = TURN;
         state[EAST_WEST] = RED;
+        if(SW2_PRESSED) {
+            state[NORTH_SOUTH] = TURN;
+            ESOS_TASK_WAIT_TICKS(10000) // Wait for 10s
+        }
+        else state[NORTH_SOUTH] = RED;
         
-        ESOS_TASK_WAIT_TICKS(10000) // Wait for 10s
         
         state[NORTH_SOUTH] = GREEN;
         
@@ -105,6 +110,7 @@ void user_init()
     CONFIG_LED2();
     CONFIG_LED3();
     CONFIG_SW1();
+    CONFIG_SW2();
     CONFIG_SW3();
     
     esos_RegisterTask(state_machine);
