@@ -27,39 +27,57 @@ inline void _esos_uiF14_setLastRPGCounter (uint16_t newValue) {
 
 //SW1
 inline BOOL esos_uiF14_getSW1Pressed (void) {
-    return (_st_esos_uiF14Data.b_SW1Pressed==TRUE);
+    bool temp = _st_esos_uiF14Data.b_SW1Pressed;
+    _st_esos_uiF14Data.b_SW1Pressed = FALSE;
+    return (temp==TRUE);
 }
 
 inline BOOL esos_uiF14_getSW1Released (void) {
-    return (_st_esos_uiF14Data.b_SW1Pressed==FALSE);
+    bool temp = _st_esos_uiF14Data.b_SW1Released;
+    _st_esos_uiF14Data.b_SW1Released = FALSE;
+    return (temp==TRUE);
 }
 
 inline BOOL esos_uiF14_getSW1DoublePressed (void) {
-    return (_st_esos_uiF14Data.b_SW1DoublePressed==TRUE);
+    bool temp = _st_esos_uiF14Data.b_SW1DoublePressed;
+    _st_esos_uiF14Data.b_SW1DoublePressed = FALSE;
+    return (temp==TRUE);
 }
 //SW2
 inline BOOL esos_uiF14_getSW2Pressed (void) {
-    return (_st_esos_uiF14Data.b_SW2Pressed==TRUE);
+    bool temp = _st_esos_uiF14Data.b_SW2Pressed;
+    _st_esos_uiF14Data.b_SW2Pressed = FALSE;
+    return (temp==TRUE);
 }
 
 inline BOOL esos_uiF14_getSW2Released (void) {
-    return (_st_esos_uiF14Data.b_SW2Pressed==FALSE);
+    bool temp = _st_esos_uiF14Data.b_SW2Released;
+    _st_esos_uiF14Data.b_SW2Released = FALSE;
+    return (temp==TRUE);
 }
 
 inline BOOL esos_uiF14_getSW2DoublePressed (void) {
-    return (_st_esos_uiF14Data.b_SW2DoublePressed==TRUE);
+    bool temp = _st_esos_uiF14Data.b_SW2DoublePressed;
+    _st_esos_uiF14Data.b_SW2DoublePressed = FALSE;
+    return (temp==TRUE);
 }
 //SW3
 inline BOOL esos_uiF14_getSW3Pressed (void) {
-    return (_st_esos_uiF14Data.b_SW3Pressed==TRUE);
+    bool temp = _st_esos_uiF14Data.b_SW3Pressed;
+    _st_esos_uiF14Data.b_SW3Pressed = FALSE;
+    return (temp==TRUE);
 }
 
 inline BOOL esos_uiF14_getSW3Released (void) {
-    return (_st_esos_uiF14Data.b_SW3Pressed==FALSE);
+    bool temp = _st_esos_uiF14Data.b_SW3Released;
+    _st_esos_uiF14Data.b_SW3Released = FALSE;
+    return (temp==TRUE);
 }
 
 inline BOOL esos_uiF14_getSW3DoublePressed (void) {
-    return (_st_esos_uiF14Data.b_SW3DoublePressed==TRUE);
+    bool temp = _st_esos_uiF14Data.b_SW3DoublePressed;
+    _st_esos_uiF14Data.b_SW3DoublePressed = FALSE;
+    return (temp==TRUE);
 }
 
 
@@ -138,26 +156,38 @@ int16_t esos_uiF14_getRpgVelocity_i16( void ) {
 
 void config_esos_uiF14() {
   // setup your UI implementation
-    __esos_unsafe_PutString( HELLO_MSG );
+    __esos_unsafe_PutString(HELLO_MSG);
     CONFIG_LED1();
     CONFIG_LED2();
     CONFIG_LED3();
     CONFIG_SW1();
     CONFIG_SW2();
     CONFIG_SW3();
+    CONFIG_RGB();
     
-//    esos_RegisterTask( __uiF14_task ); // Original line here. Wrong, right?
-    esos_RegisterTask( __esos_uiF14_task )
+    esos_RegisterTimer(__esos_uiF14_task,10); //in ESOS, 1 tick/ms, so run this task every 10ms
+}
+    
+ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
+    if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
+        if (_st_esos_uiF14Data.b_SW1Pressed == TRUE) { //switch was aleady pressed the 10ms ago
+            
+        }
+        _st_esos_uiF14Data.b_SW1Pressed = TRUE;
+    }
+    else {
+        _st_esos_uiF14Data.b_SW1Released = TRUE;
+    }
 }
 
 
 // UIF14 task to manage user-interface
-ESOS_USER_TASK( __esos_uiF14_task ){
-  
-    ESOS_TASK_BEGIN();
-    while(TRUE) {
-        // do your UI stuff here
-        ESOS_TASK_WAIT_TICKS( __ESOS_UIF14_UI_PERIOD ); //What is this?
-    }
-    ESOS_TASK_END();
-}
+//ESOS_USER_TASK( __esos_uiF14_task ){ //Commented out, because I think we need to use a user timer instead of user task for this function to make sure it runs every 10ms as required
+//
+//    ESOS_TASK_BEGIN();
+//    while(TRUE) {
+//        // do your UI stuff here
+//        ESOS_TASK_WAIT_TICKS( __ESOS_UIF14_UI_PERIOD ); //What is this?
+//    }
+//    ESOS_TASK_END();
+//}
