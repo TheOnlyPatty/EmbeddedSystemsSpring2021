@@ -15,9 +15,9 @@ typedef struct {
     BOOL b_SW1Pressed;
     BOOL b_SW1DoublePressed;
     BOOL b_SW2Pressed;
-    BOOL b_SW1DoublePressed;    
+    BOOL b_SW2DoublePressed;
     BOOL b_SW3Pressed;
-    BOOL b_SW1DoublePressed;    
+    BOOL b_SW3DoublePressed;    
     
     BOOL b_RPGAHigh;
     BOOL b_RPGBHigh;

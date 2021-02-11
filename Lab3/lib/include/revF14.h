@@ -15,7 +15,6 @@
 #define LED3  (_LATB15) // red led
 
 
-
 void CONFIG_SW1() 
 {
 	CONFIG_RB13_AS_DIG_INPUT();
@@ -37,6 +36,17 @@ void CONFIG_SW3()
 	DELAY_US(1);
 }
 
+void CONFIG_RGB()
+{
+    CONFIG_RB8_AS_DIG_INPUT();
+    CONFIG_RB9_AS_DIG_INPUT();
+    ENABLE_RB8_PULLUP();
+    ENABLE_RB9_PULLUP();
+    DELAY_US(1);
+}
+
+#define RPGA (_RB8)
+#define RPGB (_RB9)
 
 #define SW1_PRESSED (_RB13 == 0)
 #define SW1_RELEASED (_RB13 == 1)
