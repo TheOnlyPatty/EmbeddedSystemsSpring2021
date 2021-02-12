@@ -225,14 +225,14 @@ void config_interrupts() {
     IPC0bits.IC1IP = 1; //Set module interrupt priority as 1
     
     _IC1R = SW1; //Set IC1 input as SW1
-    IC1CON1
+//    IC1CON1
     
 }
     
 ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
     if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
         _st_esos_uiF14Data.b_SW1Pressed = TRUE;
-        T2
+//        T2
     }
     else {
         _st_esos_uiF14Data.b_SW1Released = TRUE;
