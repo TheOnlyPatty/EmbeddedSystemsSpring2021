@@ -20,13 +20,12 @@ inline void _esos_uiF14_setRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_RPGCounter = newValue;
     return;
 }
-
 inline void _esos_uiF14_setLastRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_lastRPGCounter = newValue;
     return;
 }
 
-// PUBLIC SWITCH FUNCTIONS
+    // PUBLIC SWITCH FUNCTIONS
 
 //SW1
 inline BOOL esos_uiF14_getSW1Pressed (void) {
@@ -34,49 +33,45 @@ inline BOOL esos_uiF14_getSW1Pressed (void) {
     _st_esos_uiF14Data.b_SW1Pressed = FALSE;
     return (temp==TRUE);
 }
-
 inline BOOL esos_uiF14_getSW1Released (void) {
     bool temp = _st_esos_uiF14Data.b_SW1Released;
     _st_esos_uiF14Data.b_SW1Released = FALSE;
     return (temp==TRUE);
 }
-
 inline BOOL esos_uiF14_getSW1DoublePressed (void) {
     bool temp = _st_esos_uiF14Data.b_SW1DoublePressed;
     _st_esos_uiF14Data.b_SW1DoublePressed = FALSE;
     return (temp==TRUE);
 }
+
 //SW2
 inline BOOL esos_uiF14_getSW2Pressed (void) {
     bool temp = _st_esos_uiF14Data.b_SW2Pressed;
     _st_esos_uiF14Data.b_SW2Pressed = FALSE;
     return (temp==TRUE);
 }
-
 inline BOOL esos_uiF14_getSW2Released (void) {
     bool temp = _st_esos_uiF14Data.b_SW2Released;
     _st_esos_uiF14Data.b_SW2Released = FALSE;
     return (temp==TRUE);
 }
-
 inline BOOL esos_uiF14_getSW2DoublePressed (void) {
     bool temp = _st_esos_uiF14Data.b_SW2DoublePressed;
     _st_esos_uiF14Data.b_SW2DoublePressed = FALSE;
     return (temp==TRUE);
 }
+
 //SW3
 inline BOOL esos_uiF14_getSW3Pressed (void) {
     bool temp = _st_esos_uiF14Data.b_SW3Pressed;
     _st_esos_uiF14Data.b_SW3Pressed = FALSE;
     return (temp==TRUE);
 }
-
 inline BOOL esos_uiF14_getSW3Released (void) {
     bool temp = _st_esos_uiF14Data.b_SW3Released;
     _st_esos_uiF14Data.b_SW3Released = FALSE;
     return (temp==TRUE);
 }
-
 inline BOOL esos_uiF14_getSW3DoublePressed (void) {
     bool temp = _st_esos_uiF14Data.b_SW3DoublePressed;
     _st_esos_uiF14Data.b_SW3DoublePressed = FALSE;
@@ -84,7 +79,7 @@ inline BOOL esos_uiF14_getSW3DoublePressed (void) {
 }
 
 
-// PUBLIC LED FUNCTIONS
+    // PUBLIC LED FUNCTIONS
 
 //LED1
 inline BOOL esos_uiF14_isLED1On (void) {
@@ -223,7 +218,6 @@ ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
 // UIF14 INITIALIZATION FUNCTION
 
 void config_esos_uiF14() {
-  // setup your UI implementation
     __esos_unsafe_PutString(HELLO_MSG);
     CONFIG_LED1();
     CONFIG_LED2();
@@ -279,16 +273,3 @@ ESOS_USER_TASK(update_LED3) {
         UPDATE_LED(3);
     ESOS_TASK_END();
 }
-
-
-
-// UIF14 task to manage user-interface
-//ESOS_USER_TASK( __esos_uiF14_task ){ //Commented out, because I think we need to use a user timer instead of user task for this function to make sure it runs every 10ms as required
-//
-//    ESOS_TASK_BEGIN();
-//    while(TRUE) {
-//        // do your UI stuff here
-//        ESOS_TASK_WAIT_TICKS( __ESOS_UIF14_UI_PERIOD ); //What is this?
-//    }
-//    ESOS_TASK_END();
-//}
