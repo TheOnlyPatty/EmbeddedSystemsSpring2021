@@ -12,6 +12,9 @@
 #include "esos.h"
 #include "esos_pic24.h"
 
+// Used for determining which way the RPG is rotating and at what velocity
+#define velocity(v) (v < 0 ? -v : v)
+
 // PRIVATE FUNCTIONS
 inline void _esos_uiF14_setRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_RPGCounter = newValue;
@@ -177,27 +180,44 @@ inline BOOL esos_uiF14_isRpgTurning ( void ) {
 }
 
 inline BOOL esos_uiF14_isRpgTurningSlow( void ) {
-  // not yet implemented
+  int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
+  return /* Check the velocity vs the velocity required to be slow */
 }
 
 inline BOOL esos_uiF14_isRpgTurningMedium( void ) {
-  // not yet implemented
+  int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
+  return /* Check the velocity vs the velocity required to be medium */
 }
 
 inline BOOL esos_uiF14_isRpgTurningFast( void ) {
-  // not yet implemented
+  int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
+  return /* Check the velocity vs the velocity required to be fast */
 }
 
 inline BOOL esos_uiF14_isRpgTurningCW( void ) {
-  // not yet implemented
+  int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
+  return (v > 0 && esos_uiF14_isRPGTurning()); 
 }
 
 inline BOOL esos_uiF14_isRpgTurningCCW( void ) {
-  // not yet implemented
+  int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
+  return (v < 0 && esos_uiF14_isRPGTurning());
 }
 
 int16_t esos_uiF14_getRpgVelocity_i16( void ) {
-  // not yet implemented
+  return _st_esos_uiF14Data.i16_RPGVelocity;
+}
+
+ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
+    if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
+        if (_st_esos_uiF14Data.b_SW1Pressed == TRUE) { //switch was aleady pressed the 10ms ago
+            
+        }
+        _st_esos_uiF14Data.b_SW1Pressed = TRUE;
+    }
+    else {
+        _st_esos_uiF14Data.b_SW1Released = TRUE;
+    }
 }
 
 // UIF14 INITIALIZATION FUNCTION
@@ -229,6 +249,7 @@ void config_interrupts() {
     
 }
     
+
 ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
     if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
         _st_esos_uiF14Data.b_SW1Pressed = TRUE;
@@ -238,7 +259,6 @@ ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
         _st_esos_uiF14Data.b_SW1Released = TRUE;
     }
 }
-
 
 
 ESOS_USER_TASK(update_LED1) {
