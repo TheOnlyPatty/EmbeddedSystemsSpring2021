@@ -14,8 +14,9 @@
 
 // Used for determining which way the RPG is rotating and at what velocity
 #define velocity(v) (v < 0 ? -v : v)
+#define MAX_DOUBLE_PRESS_TIME 0xFFFF //temporary
 
-// PRIVATE FUNCTIONS
+    // PRIVATE FUNCTIONS
 inline void _esos_uiF14_setRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_RPGCounter = newValue;
     return;
@@ -234,13 +235,50 @@ void config_esos_uiF14() {
 }
 
 void config_interrupts() {
-    IFS0bits.IC1IF = 0; //Clear the IC1 interrupt status flag
-    IEC0bits.IC1IE = 1; //Enable IC1 interrupts
-    IPC0bits.IC1IP = 1; //Set module interrupt priority as 1
+    ESOS_REGISTER_PIC24_USER_INTERRUPT(SW1_DOUBLE_PRESS, ESOS_USER_IRQ_LEVEL1, _INT1); //TODO: dont know what _INT1 should be or if it matters in this case.
+    //CONFIG_IC1_TO_RP(SW1); //Set IC1 input as SW1 (from pic24_ports.h
+    CONFIG_IC1_TO_RP(_st_esos_uiF14Data.b_SW1Pressed); //Set *debounced IC1 input as SW1 (from pic24_ports.h (not sure if this will work at all, let alone debounce)
+    IC1CON1.ICM = 0b000;    //Begin with IC1 off
+    IC1CON1.ICSIDL = 0b1;   //Continue, even in idle mode (likely not used)
+    IC1CON1.ICTSEL = 0b111; //Use system clock as counter source
+    IC1CON1.ICI = 0b00;     //Interrupt every capture event (rising edge from ICM) //TODO: verify if this works with how we process button presses. Debounce likely necessary
+    IC1CON1.ICM = 0b011;    //Turn IC1 on and capture every rising edge
+//    IC1CON2.IC32 = 0b0;     //32 bit cascade mode disabled
+//    IC1CON2.ICTRIG = 0b1;   //Set to triggr mode (instead of sync mode) TODO: is this correct? Or should I do sync mode?
+//    //IC1CON2.TRIGSTAT == TRUE if IC1 has been triggered and is running
+//    IC1CON2.SYNCSEL = 0b00000; //TODO: I'm not too sure of what to set this to
+    IC1CON2 = 0x0000; //TODO: maybe?
+    ESOS_ENABLE_PIC24_USER_INTERRUPT(SW1_DOUBLE_PRESS);
     
-    _IC1R = SW1; //Set IC1 input as SW1
-//    IC1CON1
-    
+    CONFIG_IC3_TO_RP(SW2);
+    CONFIG_IC5_TO_RP(SW3);
+}
+
+unsigned int curr_capture, prev_capture; //TODO: is this where I need to define this?
+ESOS_USER_INTERRUPT(SW1_DOUBLE_PRESS) {
+//    IFS0bits.IC1IF = 0; //Reset interrupt flag
+    ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(SW1_DOUBLE_PRESS); //Reset interrupt flag
+    curr_capture = IC1BUF; //get latest timer val
+    if(IC1CON1.ICOV) { //IC buffer overflow occurred
+        //I don't think I need to do anything here
+        _st_esos_uiF14Data.b_LED2On = TRUE; //for debugging
+    }
+    else if((curr_capture - prev_capture) < MAX_DOUBLE_PRESS_TIME) { //TODO: replace MAX_DOUBLE_PRESS_TIME
+        _st_esos_uiF14Data.b_SW1DoublePressed = TRUE;
+        _st_esos_uiF14Data.b_LED1On = TRUE; //for debugging
+    }
+    else {
+        _st_esos_uiF14Data.b_LED1On = FALSE; //for debugging
+        _st_esos_uiF14Data.b_LED2On = FALSE; //for debugging
+    }
+    if(IC1CON1.ICBNE) { //Input buffer capture not empty
+        _st_esos_uiF14Data.b_LED3On = TRUE; //for debugging
+    }
+    else {
+        _st_esos_uiF14Data.b_LED3On = FALSE; //for debugging
+    }
+    IC1CON1.ICM = 0b000; //Reset IC1 buffer FIFO
+    prev_capture = curr_capture;
 }
     
 
