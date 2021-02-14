@@ -228,6 +228,8 @@ void config_esos_uiF14() {
     CONFIG_SW3();
     CONFIG_RGB();
     
+    config_interrupts();
+    
     esos_RegisterTimer(__esos_uiF14_task,10); //in ESOS, 1 tick/ms, so run this task every 10ms
     esos_RegisterTask(update_LED1);
     esos_RegisterTask(update_LED2);
@@ -250,8 +252,8 @@ void config_interrupts() {
     IC1CON2 = 0x0000; //TODO: maybe?
     ESOS_ENABLE_PIC24_USER_INTERRUPT(SW1_DOUBLE_PRESS);
     
-    CONFIG_IC3_TO_RP(SW2);
-    CONFIG_IC5_TO_RP(SW3);
+//    CONFIG_IC3_TO_RP(SW2);
+//    CONFIG_IC5_TO_RP(SW3);
 }
 
 unsigned int curr_capture, prev_capture; //TODO: is this where I need to define this?
@@ -285,10 +287,11 @@ ESOS_USER_INTERRUPT(SW1_DOUBLE_PRESS) {
 ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
     if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
         _st_esos_uiF14Data.b_SW1Pressed = TRUE;
-//        T2
+        _st_esos_uiF14Data.b_SW1Released = FALSE; //temp
     }
     else {
         _st_esos_uiF14Data.b_SW1Released = TRUE;
+        _st_esos_uiF14Data.b_SW1Pressed = FALSE; //temp
     }
 }
 
