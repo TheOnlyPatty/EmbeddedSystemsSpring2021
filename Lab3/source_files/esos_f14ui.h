@@ -13,7 +13,7 @@
 
 // STRUCTURES
 
-typedef struct {
+typedef struct _st_esos_uiF14Data {
     BOOL b_SW1Pressed;
     BOOL b_SW1DoublePressed;
     BOOL b_SW2Pressed;
@@ -32,7 +32,7 @@ typedef struct {
     uint16_t u16_LED3FlashPeriod;        
     
     uint16_t u16_RPGCounter;
-    uint16_t u16_lastRPGCounter;
+    //uint16_t u16_lastRPGCounter; //I'm not sure this is necessary
     int16_t i16_RPGVelocity;
 } _st_esos_uiF14Data_t;
 
@@ -53,7 +53,9 @@ void esos_ui_setRPGCounter (uint16_t);
 uint16_t esos_uiF14_getLastRPGCounter (void);
 void esos_ui_setLastRPGCounter (uint16_t);
 
-ESOS_USER_TASK __uiF14_task;
+//ESOS_USER_TASK __uiF14_task; // This might need parentheses? Also isn't this a timer not a task? __esos?
+ESOS_USER_TIMER(__esos_uiF14_task);
+ESOS_USER_TIMER(__esos_uiF14_rpg_poll);
 
 // PUBLIC API FUNCTION PROTOTYPES
 
@@ -136,19 +138,47 @@ void config_esos_uiF14();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST()           ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningFast() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST_CW()        ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningFast() && esos_uiF14_isRPGTurningCW() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST_CCW()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningFast() && esos_uiF14_isRPGTurningCCW() )
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_REV(y) {                                                                             \
+
+// I don't think these are needed for Lab 3
+//#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_REV(y) {                                                                             \
   uint16_t u16_start = _esos_uiF14_getRPGValue_i16();                                                                             \
   ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == u16_start + (y /* * The number of turns it takes for one revolution*/) ||  \
                         _esos_uiF14_getRPGCounter() == u16_start - (y /* * The number of turns it takes for one revolution*/) )   \
 }
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CW_REV(y) {                                                                          \
+//#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CW_REV(y) {                                                                          \
   int16_t i16_start = _esos_uiF14_getRPGValue_i16();                                                                              \
   ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start + (y /* * The number of turns it takes for one revolution*/) )   \
 }
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y) {                                                                         \
+//#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y) {                                                                         \
   int16_t i16_start = _esos_uiF14_getRPGValue_i16();                                                                              \
   ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start - (y /* * The number of turns it takes for one revolution*/) )   \
 }
 
+
+#define UPDATE_LED(num)                                                                         \
+{                                                                                               \
+    if(_st_esos_uiF14Data.u16_LED##num##FlashPeriod != 0) {                                     \
+        LED##num## = !LED##num##;                                                               \
+        ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED##num##FlashPeriod / 2);                 \
+    }                                                                                           \
+    else {                                                                                      \
+        if(_st_esos_uiF14Data.b_LED##num##On == TRUE) {                                         \
+            LED##num## = TRUE;                                                                  \
+        }                                                                                       \
+        else {                                                                                  \
+            LED##num## = FALSE;                                                                 \
+        }                                                                                       \
+    }                                                                                           \
+}
+
+// Debounce RPG by utilizing intermediary pins
+#define __RPGA_NEW _RD6
+#define __RPGB_NEW _RD7
+#define __RPG_VALUE (((uint8_t)__RPGA_NEW << 1) | __RPGB_NEW) // Getting data from RPG
+#define __RPG_NEW_CONFIG() {                               \
+  CONFIG_RPG(); /* Call original RPG config (revF14.h) */  \
+  CONFIG_RD6_AS_DIG_OUTPUT();                              \
+  CONFIG_RD7_AS_DIG_OUTPUT();                              \
+}
 
 #endif    // ESOS_UIF14_H
