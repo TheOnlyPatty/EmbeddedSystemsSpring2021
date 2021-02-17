@@ -14,6 +14,11 @@
 #define CONFIG_LED3() CONFIG_RB15_AS_DIG_OUTPUT()
 #define LED3  (_LATB15) // red led
 
+#define SW1 (_RB13)
+#define SW2 (_RB12)
+#define SW3 (_RC15)
+
+
 
 void CONFIG_SW1() 
 {

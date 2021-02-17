@@ -11,15 +11,25 @@
 // The above lines check to see if ESOS_UIF14_H has been defined previously in this file or an included file.
 // If it has not previously been defined then everything down the the #endif runs. The #endif is at the very bottom of this file.
 
+#include "esos_pic24.h"
+#include "esos_pic24_rs232.h"
+#include "pic24_timer.h"
+#include "revF14.h"
+#include "esos.h"
+
+
 // STRUCTURES
 
 typedef struct {
     BOOL b_SW1Pressed;
+    BOOL b_SW1Released; //may need to remove these
     BOOL b_SW1DoublePressed;
     BOOL b_SW2Pressed;
+    BOOL b_SW2Released; //may need to remove these
     BOOL b_SW2DoublePressed;
     BOOL b_SW3Pressed;
-    BOOL b_SW3DoublePressed;    
+    BOOL b_SW3Released; //may need to remove these
+    BOOL b_SW3DoublePressed;
     
     BOOL b_RPGAHigh;
     BOOL b_RPGBHigh;
@@ -53,7 +63,7 @@ void esos_ui_setRPGCounter (uint16_t);
 uint16_t esos_uiF14_getLastRPGCounter (void);
 void esos_ui_setLastRPGCounter (uint16_t);
 
-ESOS_USER_TASK __uiF14_task;
+//ESOS_USER_TASK __uiF14_task;
 
 // PUBLIC API FUNCTION PROTOTYPES
 
@@ -114,7 +124,7 @@ void config_esos_uiF14();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2Pressed() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2Released() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED_AND_RELEASED() {               \
-  ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED();                                   \ 
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED();                                   \
   ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED();                                  \
 }
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2DoublePressed() )
@@ -122,7 +132,7 @@ void config_esos_uiF14();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3Pressed() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3Released() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED_AND_RELEASED() {               \
-  ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED();                                   \ 
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED();                                   \
   ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED();                                  \
 }
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3DoublePressed() )
@@ -148,22 +158,6 @@ void config_esos_uiF14();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y) {                                                                         \
   int16_t i16_start = _esos_uiF14_getRPGValue_i16();                                                                              \
   ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start - (y /* * The number of turns it takes for one revolution*/) )   \
-}
-
-#define UPDATE_LED(num)                                                                         \
-{                                                                                               \
-    if(_st_esos_uiF14Data.u16_LED##num##FlashPeriod != 0) {                                     \
-        LED##num## = !LED##num##;                                                               \
-        ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED##num##FlashPeriod / 2);                 \
-    }                                                                                           \
-    else {                                                                                      \
-        if(_st_esos_uiF14Data.b_LED##num##On == TRUE) {                                         \
-            LED##num## = TRUE;                                                                  \
-        }                                                                                       \
-        else {                                                                                  \
-            LED##num## = FALSE;                                                                 \
-        }                                                                                       \
-    }                                                                                           \
 }
 
 
