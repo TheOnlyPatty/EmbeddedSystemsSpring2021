@@ -6,6 +6,12 @@
  * 
  * ****************************************************************/
 
+#include <stdbool.h>
+#include <stdint.h>
+#include "esos.h"
+#include "esos_pic24.h"
+#include "revF14.h"
+
 #ifndef   ESOS_UIF14_H
 #define ESOS_UIF14_H //What are these lines doing?
 // The above lines check to see if ESOS_UIF14_H has been defined previously in this file or an included file.
@@ -14,12 +20,15 @@
 // STRUCTURES
 
 typedef struct _st_esos_uiF14Data {
-    BOOL b_SW1Pressed;
+    BOOL b_SW1Pressed; //BOOL comes from all_generic.h lines 402-407
     BOOL b_SW1DoublePressed;
+    BOOL b_SW1Released;
     BOOL b_SW2Pressed;
     BOOL b_SW2DoublePressed;
+    BOOL b_SW2Released;
     BOOL b_SW3Pressed;
     BOOL b_SW3DoublePressed;    
+    BOOL b_SW3Released;
     
     BOOL b_RPGAHigh;
     BOOL b_RPGBHigh;
@@ -116,7 +125,7 @@ void config_esos_uiF14();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2Pressed() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2Released() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED_AND_RELEASED() {               \
-  ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED();                                   \ 
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED();                                   \
   ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED();                                  \
 }
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2DoublePressed() )
@@ -124,7 +133,7 @@ void config_esos_uiF14();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3Pressed() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3Released() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED_AND_RELEASED() {               \
-  ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED();                                   \ 
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED();                                   \
   ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED();                                  \
 }
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3DoublePressed() )
@@ -154,7 +163,7 @@ void config_esos_uiF14();
   ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start - (y /* * The number of turns it takes for one revolution*/) )   \
 }
 
-
+/* //ERROR: pasting "LEDX" and "=" does not give a valid preprocessing token
 #define UPDATE_LED(num)                                                                         \
 {                                                                                               \
     if(_st_esos_uiF14Data.u16_LED##num##FlashPeriod != 0) {                                     \
@@ -170,6 +179,7 @@ void config_esos_uiF14();
         }                                                                                       \
     }                                                                                           \
 }
+*/
 
 // Debounce RPG by utilizing intermediary pins
 #define __RPGA_NEW _RD6

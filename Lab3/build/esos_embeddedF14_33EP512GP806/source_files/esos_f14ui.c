@@ -11,6 +11,7 @@
 #include "revF14.h"
 #include "esos.h"
 #include "esos_pic24.h"
+#include <stdbool.h>
 
 // Used for determining which way the RPG is rotating and at what velocity
 #define velocity(v) (v < 0 ? -v : v)
@@ -21,11 +22,12 @@ inline void _esos_uiF14_setRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_RPGCounter = newValue;
     return;
 }
+/* //I don't think this is necessary
 inline void _esos_uiF14_setLastRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_lastRPGCounter = newValue;
     return;
 }
-
+*/
     // PUBLIC SWITCH FUNCTIONS
 
 //SW1
@@ -106,7 +108,7 @@ inline void esos_uiF14_toggleLED1 (void) {
 }
 inline void esos_uiF14_flashLED1( uint16_t u16_period) {
     _st_esos_uiF14Data.u16_LED1FlashPeriod = u16_period;
-    return
+    return;
 }
 
 //LED2
@@ -133,7 +135,7 @@ inline void esos_uiF14_toggleLED2 (void) {
 }
 inline void esos_uiF14_flashLED2( uint16_t u16_period) {
     _st_esos_uiF14Data.u16_LED2FlashPeriod = u16_period;
-    return
+    return;
 }
 
 //LED3
@@ -160,7 +162,7 @@ inline void esos_uiF14_toggleLED3 (void) {
 }
 inline void esos_uiF14_flashLED3( uint16_t u16_period) {
     _st_esos_uiF14Data.u16_LED3FlashPeriod = u16_period;
-    return
+    return;
 }
 
 /****** RED, GREEN, and YELLOW functions need to be created *******/
@@ -177,17 +179,17 @@ inline BOOL esos_uiF14_isRpgTurning ( void ) {
 
 inline BOOL esos_uiF14_isRpgTurningSlow( void ) {
   int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
-  return /* Check the velocity vs the velocity required to be slow */
+  return; /* Check the velocity vs the velocity required to be slow */
 }
 
 inline BOOL esos_uiF14_isRpgTurningMedium( void ) {
   int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
-  return /* Check the velocity vs the velocity required to be medium */
+  return; /* Check the velocity vs the velocity required to be medium */
 }
 
 inline BOOL esos_uiF14_isRpgTurningFast( void ) {
   int16_t v = velocity(_st_esos_uiF14Data.i16_RPGVelocity);
-  return /* Check the velocity vs the velocity required to be fast */
+  return; /* Check the velocity vs the velocity required to be fast */
 }
 
 inline BOOL esos_uiF14_isRpgTurningCW( void ) {
@@ -225,9 +227,9 @@ ESOS_USER_TIMER(__esos_uiF14_rpg_poll) {
 
     if (u8_rpg_value == 0 && (__RPG_VALUE == 1 || __RPG_VALUE == 2)) {
         if (__RPG_VALUE == 1)
-            _st_esos_uiF14Data.i16_RPGCounter += 1;
+            _st_esos_uiF14Data.u16_RPGCounter += 1;
         else 
-            _st_esos_uiF14Data.i16_RPGCounter -= 1;
+            _st_esos_uiF14Data.u16_RPGCounter -= 1;
     }
 }
 
@@ -237,7 +239,7 @@ static int32_t i32_cur_position = 0;
 //static int32_t i32_avg_velocity = 0; // Using the average might make the velocity measurement more accurate?
 static int32_t i32_cur_velocity = 0;
 ESOS_USER_TIMER(__esos_uiF14_rpg_velocity) {
-    i32_cur_position = ((int32_t)_st_esos_uiF14Data.i16_RPGCounter) << 12;
+    i32_cur_position = ((int32_t)_st_esos_uiF14Data.u16_RPGCounter) << 12;
 
     i32_cur_velocity = (i32_cur_position - i32_prev_position);
     //i32_avg_velocity = ((3 * i32_cur_velocity) / 8) + ((5 * i32_avg_velocity) / 8);
@@ -246,13 +248,28 @@ ESOS_USER_TIMER(__esos_uiF14_rpg_velocity) {
 
 // This is more of an RPG function, but it needs to be below the velocity calculation I think
 inline void esos_uiF14_resetRPG( void ) {
-    _st_esos_uiF14Data.i16_RPGCounter = 0;
+    _st_esos_uiF14Data.u16_RPGCounter = 0;
     _st_esos_uiF14Data.i16_RPGVelocity = 0;
     i32_prev_position = 0;
     i32_cur_position = 0;
     //i32_avg_velocity = 0;
     i32_cur_velocity = 0;
+    return;
 }
+
+/* // Commented out because this is the second defitinion of the _esos_uiF14_task timer
+ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
+    if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
+        _st_esos_uiF14Data.b_SW1Pressed = TRUE;
+        _st_esos_uiF14Data.b_SW1Released = FALSE; //temp
+    }
+    else {
+        _st_esos_uiF14Data.b_SW1Released = TRUE;
+        _st_esos_uiF14Data.b_SW1Pressed = FALSE; //temp
+    }
+}
+*/
+
 
 // UIF14 INITIALIZATION FUNCTION
 
@@ -270,12 +287,15 @@ void config_esos_uiF14() {
     config_interrupts();
     
     esos_RegisterTimer(__esos_uiF14_task,10); //in ESOS, 1 tick/ms, so run this task every 10ms
-    esos_RegisterTask(update_LED1);
-    esos_RegisterTask(update_LED2);
-    esos_RegisterTask(update_LED3);
+    //esos_RegisterTask(update_LED1);
+    //esos_RegisterTask(update_LED2);
+    //esos_RegisterTask(update_LED3);
+    return;
 }
 
+/* // Commented out because it was throwing errors
 void config_interrupts() {
+    // ESOS_REGISTER_PIC24_USER_INTERRUPT definition in esos_pic24_irq.h
     ESOS_REGISTER_PIC24_USER_INTERRUPT(SW1_DOUBLE_PRESS, ESOS_USER_IRQ_LEVEL1, _INT1); //TODO: dont know what _INT1 should be or if it matters in this case.
     //CONFIG_IC1_TO_RP(SW1); //Set IC1 input as SW1 (from pic24_ports.h
     CONFIG_IC1_TO_RP(_st_esos_uiF14Data.b_SW1Pressed); //Set *debounced IC1 input as SW1 (from pic24_ports.h (not sure if this will work at all, let alone debounce)
@@ -293,8 +313,11 @@ void config_interrupts() {
     
 //    CONFIG_IC3_TO_RP(SW2);
 //    CONFIG_IC5_TO_RP(SW3);
+    return;
 }
+*/
 
+/* // Commented out because it was throwing errors
 unsigned int curr_capture, prev_capture; //TODO: is this where I need to define this?
 ESOS_USER_INTERRUPT(SW1_DOUBLE_PRESS) {
 //    IFS0bits.IC1IF = 0; //Reset interrupt flag
@@ -321,20 +344,9 @@ ESOS_USER_INTERRUPT(SW1_DOUBLE_PRESS) {
     IC1CON1.ICM = 0b000; //Reset IC1 buffer FIFO
     prev_capture = curr_capture;
 }
-    
+*/
 
-ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
-    if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
-        _st_esos_uiF14Data.b_SW1Pressed = TRUE;
-        _st_esos_uiF14Data.b_SW1Released = FALSE; //temp
-    }
-    else {
-        _st_esos_uiF14Data.b_SW1Released = TRUE;
-        _st_esos_uiF14Data.b_SW1Pressed = FALSE; //temp
-    }
-}
-
-
+/* //Commented out because UPDATE_LED() throws an error
 ESOS_USER_TASK(update_LED1) {
     //define any local vars here
     ESOS_TASK_BEGIN();
@@ -353,3 +365,4 @@ ESOS_USER_TASK(update_LED3) {
         UPDATE_LED(3);
     ESOS_TASK_END();
 }
+*/
