@@ -41,7 +41,7 @@ void CONFIG_SW3()
 	DELAY_US(1);
 }
 
-void CONFIG_RGB()
+void CONFIG_RPG()
 {
     CONFIG_RB8_AS_DIG_INPUT();
     CONFIG_RB9_AS_DIG_INPUT();

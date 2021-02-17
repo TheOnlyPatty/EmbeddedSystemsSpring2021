@@ -6,18 +6,29 @@
  * 
  * ****************************************************************/
 
+#include <stdbool.h>
+#include <stdint.h>
+#include "esos.h"
+#include "esos_pic24.h"
+#include "revF14.h"
+
 #ifndef   ESOS_UIF14_H
 #define ESOS_UIF14_H //What are these lines doing?
+// The above lines check to see if ESOS_UIF14_H has been defined previously in this file or an included file.
+// If it has not previously been defined then everything down the the #endif runs. The #endif is at the very bottom of this file.
 
 // STRUCTURES
 
-typedef struct {
-    BOOL b_SW1Pressed;
+typedef struct _st_esos_uiF14Data {
+    BOOL b_SW1Pressed; //BOOL comes from all_generic.h lines 402-407
     BOOL b_SW1DoublePressed;
+    BOOL b_SW1Released;
     BOOL b_SW2Pressed;
     BOOL b_SW2DoublePressed;
+    BOOL b_SW2Released;
     BOOL b_SW3Pressed;
     BOOL b_SW3DoublePressed;    
+    BOOL b_SW3Released;
     
     BOOL b_RPGAHigh;
     BOOL b_RPGBHigh;
@@ -30,7 +41,8 @@ typedef struct {
     uint16_t u16_LED3FlashPeriod;        
     
     uint16_t u16_RPGCounter;
-    uint16_t u16_lastRPGCounter;
+    //uint16_t u16_lastRPGCounter; //I'm not sure this is necessary
+    int16_t i16_RPGVelocity;
 } _st_esos_uiF14Data_t;
 
 // DEFINEs and CONSTANTs
@@ -50,7 +62,9 @@ void esos_ui_setRPGCounter (uint16_t);
 uint16_t esos_uiF14_getLastRPGCounter (void);
 void esos_ui_setLastRPGCounter (uint16_t);
 
-ESOS_USER_TASK __uiF14_task;
+//ESOS_USER_TASK __uiF14_task; // This might need parentheses? Also isn't this a timer not a task? __esos?
+ESOS_USER_TIMER(__esos_uiF14_task);
+ESOS_USER_TIMER(__esos_uiF14_rpg_poll);
 
 // PUBLIC API FUNCTION PROTOTYPES
 
@@ -89,6 +103,7 @@ inline void esos_uiF14_turnYellowLEDOn (void);
 inline void esos_uiF14_turnYellowLEDOff (void);
 
 inline uint16_t esos_uiF14_getRPGValue_u16 (void);
+inline int16_t esos_uiF14_getRPGVelocity_i16 (void);
 inline BOOL esos_uiF14_isRPGTurning (void);
 inline BOOL esos_uiF14_isRPGTurningSlow (void);
 inline BOOL esos_uiF14_isRPGTurningMedium (void);
@@ -97,40 +112,83 @@ inline BOOL esos_uiF14_isRPGTurningCW (void);
 inline BOOL esos_uiF14_isRPGTurningCCW (void);
 
 void config_esos_uiF14();
-int16_t esos_uiF14_getRPGVelocity_i16 (void);
 
 // PUBLIC API ESOS TASK MACROS
 
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW1_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW1Pressed() )
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW1_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW1Released() )
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW1_PRESSED_AND_RELEASED() do {            /
-                            ESOS_TASK_WAIT_UNTIL_UIF14_SW1_PRESSED();           /
-                            ESOS_TASK_WAIT_UNTIL_UIF14_SW1_RELEASED();          /
-                          } while (0) 
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW1_DOUBLE_PRESSED()       // not yet implemented
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW1_PRESSED_AND_RELEASED() {               \
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW1_PRESSED();                                   \
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW1_RELEASED();                                  \
+}
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW1_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW1DoublePressed() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2Pressed() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2Released() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED_AND_RELEASED() {               \
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED();                                   \
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED();                                  \
+}
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW2DoublePressed() )
 
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED()              // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_RELEASED()             // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_PRESSED_AND_RELEASED() // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW2_DOUBLE_PRESSED()       // not yet implemented
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED()              ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3Pressed() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED()             ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3Released() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED_AND_RELEASED() {               \
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED();                                   \
+  ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED();                                  \
+}
+#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3DoublePressed() )
 
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED()              // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_RELEASED()             // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_PRESSED_AND_RELEASED() // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_DOUBLE_PRESSED()       // not yet implemented
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS()          ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurning() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS_CW()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningCW() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS_CCW()      ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningCCW() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_MEDIUM()         ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningMedium() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_MEDIUM_CW()      ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningMedium() && esos_uiF14_isRPGTurningCW() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_MEDIUM_CCW()     ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningMedium() && esos_uiF14_isRPGTurningCCW() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST()           ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningFast() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST_CW()        ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningFast() && esos_uiF14_isRPGTurningCW() )
+#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST_CCW()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isRPGTurningFast() && esos_uiF14_isRPGTurningCCW() )
 
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS()          // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS_CW()       // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS_CCW()      // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_MEDIUM()         // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_MEDIUM_CW()      // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_MEDIUM_CCW()     // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST()           // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST_CW()        // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_TURNS_FAST_CCW()       // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_REV(y)           // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CW_REV(y)        // not yet implemented
-#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y)       // not yet implemented
+// I don't think these are needed for Lab 3
+//#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_REV(y) {                                                                             \
+  uint16_t u16_start = _esos_uiF14_getRPGValue_i16();                                                                             \
+  ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == u16_start + (y /* * The number of turns it takes for one revolution*/) ||  \
+                        _esos_uiF14_getRPGCounter() == u16_start - (y /* * The number of turns it takes for one revolution*/) )   \
+}
+//#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CW_REV(y) {                                                                          \
+  int16_t i16_start = _esos_uiF14_getRPGValue_i16();                                                                              \
+  ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start + (y /* * The number of turns it takes for one revolution*/) )   \
+}
+//#define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y) {                                                                         \
+  int16_t i16_start = _esos_uiF14_getRPGValue_i16();                                                                              \
+  ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start - (y /* * The number of turns it takes for one revolution*/) )   \
+}
 
+/* //ERROR: pasting "LEDX" and "=" does not give a valid preprocessing token
+#define UPDATE_LED(num)                                                                         \
+{                                                                                               \
+    if(_st_esos_uiF14Data.u16_LED##num##FlashPeriod != 0) {                                     \
+        LED##num## = !LED##num##;                                                               \
+        ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED##num##FlashPeriod / 2);                 \
+    }                                                                                           \
+    else {                                                                                      \
+        if(_st_esos_uiF14Data.b_LED##num##On == TRUE) {                                         \
+            LED##num## = TRUE;                                                                  \
+        }                                                                                       \
+        else {                                                                                  \
+            LED##num## = FALSE;                                                                 \
+        }                                                                                       \
+    }                                                                                           \
+}
+*/
+
+// Debounce RPG by utilizing intermediary pins
+#define __RPGA_NEW _RD6
+#define __RPGB_NEW _RD7
+#define __RPG_VALUE (((uint8_t)__RPGA_NEW << 1) | __RPGB_NEW) // Getting data from RPG
+#define __RPG_NEW_CONFIG() {                               \
+  CONFIG_RPG(); /* Call original RPG config (revF14.h) */  \
+  CONFIG_RD6_AS_DIG_OUTPUT();                              \
+  CONFIG_RD7_AS_DIG_OUTPUT();                              \
+}
 
 #endif    // ESOS_UIF14_H
