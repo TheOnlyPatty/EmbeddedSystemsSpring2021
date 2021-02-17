@@ -163,6 +163,7 @@ void config_esos_uiF14();
   ESOS_TASK_WAIT_UNTIL( _esos_uiF14_getRPGCounter() == i16_start - (y /* * The number of turns it takes for one revolution*/) )   \
 }
 
+
 /* //ERROR: pasting "LEDX" and "=" does not give a valid preprocessing token
 #define UPDATE_LED(num)                                                                         \
 {                                                                                               \
@@ -190,5 +191,23 @@ void config_esos_uiF14();
   CONFIG_RD6_AS_DIG_OUTPUT();                              \
   CONFIG_RD7_AS_DIG_OUTPUT();                              \
 }
+
+#define UPDATE_LED(num)
+{
+    if(_st_esos_uiF14Data.u16_LED##num##FlashPeriod != 0) {
+        LED##num## = !LED##num##;
+        ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED##num##FlashPeriod / 2);
+    }
+    else {
+        if(_st_esos_uiF14Data.b_LED##num##On == TRUE) {
+            LED##num## = TRUE;
+        }
+        else {
+            LED##num## = FALSE;
+        }
+    }
+}
+
+
 
 #endif    // ESOS_UIF14_H

@@ -22,12 +22,19 @@ inline void _esos_uiF14_setRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_RPGCounter = newValue;
     return;
 }
+
 /* //I don't think this is necessary
+
+
 inline void _esos_uiF14_setLastRPGCounter (uint16_t newValue) {
     _st_esos_uiF14Data.u16_lastRPGCounter = newValue;
     return;
 }
+
 */
+
+
+
     // PUBLIC SWITCH FUNCTIONS
 
 //SW1
@@ -108,6 +115,7 @@ inline void esos_uiF14_toggleLED1 (void) {
 }
 inline void esos_uiF14_flashLED1( uint16_t u16_period) {
     _st_esos_uiF14Data.u16_LED1FlashPeriod = u16_period;
+
     return;
 }
 
@@ -138,6 +146,7 @@ inline void esos_uiF14_flashLED2( uint16_t u16_period) {
     return;
 }
 
+
 //LED3
 inline BOOL esos_uiF14_isLED3On (void) {
     return (_st_esos_uiF14Data.b_LED3On==TRUE);
@@ -162,7 +171,9 @@ inline void esos_uiF14_toggleLED3 (void) {
 }
 inline void esos_uiF14_flashLED3( uint16_t u16_period) {
     _st_esos_uiF14Data.u16_LED3FlashPeriod = u16_period;
+
     return;
+
 }
 
 /****** RED, GREEN, and YELLOW functions need to be created *******/
@@ -287,11 +298,14 @@ void config_esos_uiF14() {
     config_interrupts();
     
     esos_RegisterTimer(__esos_uiF14_task,10); //in ESOS, 1 tick/ms, so run this task every 10ms
+
     //esos_RegisterTask(update_LED1);
     //esos_RegisterTask(update_LED2);
     //esos_RegisterTask(update_LED3);
     return;
+
 }
+
 
 /* // Commented out because it was throwing errors
 void config_interrupts() {
@@ -347,6 +361,19 @@ ESOS_USER_INTERRUPT(SW1_DOUBLE_PRESS) {
 */
 
 /* //Commented out because UPDATE_LED() throws an error
+
+ESOS_USER_TIMER(_esos_uiF14_task) { //UI Task called my timer every 10ms
+    if(SW1_PRESSED) { // Switch states do not need to be reset. This is done when the state is read
+        _st_esos_uiF14Data.b_SW1Pressed = TRUE;
+//        T2
+    }
+    else {
+        _st_esos_uiF14Data.b_SW1Released = TRUE;
+    }
+}
+
+
+
 ESOS_USER_TASK(update_LED1) {
     //define any local vars here
     ESOS_TASK_BEGIN();
@@ -365,4 +392,6 @@ ESOS_USER_TASK(update_LED3) {
         UPDATE_LED(3);
     ESOS_TASK_END();
 }
+
 */
+
