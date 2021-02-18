@@ -7,10 +7,10 @@
  * ****************************************************************/
 
 //# include esos_f14ui.h; //original line here. Seemed wrong?
-#include "esos_f14ui.h"
 #include "esos.h"
 #include "esos_pic24.h"
 #include "revF14.h"
+#include "esos_f14ui.h"
 
 // Used for determining which way the RPG is rotating and at what velocity
 #define velocity(v) (v < 0 ? -v : v)

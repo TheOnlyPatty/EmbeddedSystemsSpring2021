@@ -141,9 +141,20 @@ env.Append(BUILDERS = {'Hex' : b2h})
 # Linker dependencies
 # -------------------
 def linker_side_effect(env, program):
-  # The linker as of xc16 v1.30 uses a preprocessor by default on linker scripts, which creates a temp file named linker_script.00 (where linker_script is the name of the linker script), which causes parallel builds to fail. This can be disabled via ``--no-cpp``, but then the link fails due to the presence of preprocessor directorive. So, prevent parallel links of the same-named linker script. See http://scons.org/faq.html#How_do_I_prevent_commands_from_being_executed_in_parallel.3F, https://bitbucket.org/scons/scons/wiki/SConsMethods/SideEffect, ``SideEffect`` in http://scons.org/doc/2.5.1/HTML/scons-man.html.
-  #
-  # Note that the raw ``be['LINKERSCRIPT']`` string contains un-expanded variables, which makes scons unhappy. For example, providing ``bootloader/pic24_dspic33_bootloader.X/lkr/p${MCU}.gld.00`` as a SideEffect the produces errors like ``Internal Error: no cycle found for node build\esos_microstick2_33EP128GP502\chap14\app_ds1722.elf (<SCons.Node.FS.File object at 0x04A2BC60>) in state pending``. So, produce a full, valid file name using subst.
+
+# The linker as of xc16 v1.30 uses a preprocessor by default on linker scripts, which creates a temp file
+# named linker_script.00 (where linker_script is the name of the linker script), which causes parallel
+# builds to fail. This can be disabled via ``--no-cpp``, but then the link fails due to the presence of
+# preprocessor directorive. So, prevent parallel links of the same-named linker script.
+# See http://scons.org/faq.html#How_do_I_prevent_commands_from_being_executed_in_parallel.3F,
+# https://bitbucket.org/scons/scons/wiki/SConsMethods/SideEffect, ``SideEffect``
+# in http://scons.org/doc/2.5.1/HTML/scons-man.html. */
+#
+# Note that the raw ``be['LINKERSCRIPT']`` string contains un-expanded variables, which makes scons unhappy.
+# For example, providing ``bootloader/pic24_dspic33_bootloader.X/lkr/p${MCU}.gld.00`` as a SideEffect the
+# produces errors like ``Internal Error: no cycle found for node build\esos_microstick2_33EP128GP502\chap14\app_ds1722.elf
+# (<SCons.Node.FS.File object at 0x04A2BC60>) in state pending``. So, produce a full, valid file name using subst.
+
   linker_temp_file = '/' + env.subst(os.path.basename(env['LINKERSCRIPT'])) + '.00'
   env.SideEffect(linker_temp_file, program)
 #
@@ -245,4 +256,3 @@ def buildTargetsEsos(env, mcu, hardware_platform = 'DEFAULT_DESIGN', hardware_al
 
 
 buildTargetsEsos(env, mcu='33EP512GP806', hardware_platform='EMBEDDED_F14', hardware_alias='embeddedF14')
-
