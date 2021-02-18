@@ -202,8 +202,9 @@ void defaults( void ) {
   _st_esos_uiF14Data.b_RPGTurning_CW = FALSE;
   _st_esos_uiF14Data.b_RPGTurning_CCW = FALSE;
 
-  _st_esos_uiF14Data.u16_medVelocity = 300;
-  _st_esos_uiF14Data.u16_fastVelocity = 150;
+  _st_esos_uiF14Data.u16_noVelocity = 400;
+  _st_esos_uiF14Data.u16_medVelocity = 150;
+  _st_esos_uiF14Data.u16_fastVelocity = 15;
 
   _st_esos_uiF14Data.b_LED1On = FALSE;
   _st_esos_uiF14Data.u16_LED1FlashPeriod = 0;
@@ -252,27 +253,30 @@ ESOS_USER_TASK( __esos_uiF14_task ) {
       // Calculate time since last change in RPG. Used to calculate velocity
       _st_esos_uiF14Data.u16_RPGPeriod_ms = (esos_GetSystemTick()) - (_st_esos_uiF14Data.u16_RPGLastPeriod_ms);
       // Change last period to current period
-      _st_esos_uiF14Data.u16_RPGLastPeriod_ms = _st_esos_uiF14Data.u16_RPGPeriod_ms;
+      //_st_esos_uiF14Data.u16_RPGLastPeriod_ms = _st_esos_uiF14Data.u16_RPGPeriod_ms;
+
+      // New method for getting last period
+      _st_esos_uiF14Data.u16_RPGLastPeriod_ms = esos_GetSystemTick();
 
       // Figure out what speed the RPG is moving (slow, medium, fast)
-      if (_st_esos_uiF14Data.u16_RPGPeriod_ms < _st_esos_uiF14Data.u16_medVelocity) {
-        _st_esos_uiF14Data.b_RPGMoving_slow = TRUE;
-		    _st_esos_uiF14Data.b_RPGMoving_med = FALSE;
-		    _st_esos_uiF14Data.b_RPGMoving_fast = FALSE;
+      //Fast
+      if (_st_esos_uiF14Data.u16_RPGPeriod_ms >= _st_esos_uiF14Data.u16_medVelocity) {
+          _st_esos_uiF14Data.b_RPGMoving_slow = TRUE;
+          _st_esos_uiF14Data.b_RPGMoving_med = FALSE;
+          _st_esos_uiF14Data.b_RPGMoving_fast = FALSE;
       }
 
       // Medium
-      else if (_st_esos_uiF14Data.u16_RPGPeriod_ms >= _st_esos_uiF14Data.u16_medVelocity && _st_esos_uiF14Data.u16_RPGPeriod_ms < _st_esos_uiF14Data.u16_fastVelocity) {
-        _st_esos_uiF14Data.b_RPGMoving_slow = FALSE;
-		    _st_esos_uiF14Data.b_RPGMoving_med = TRUE;
-		    _st_esos_uiF14Data.b_RPGMoving_fast = FALSE;
+      else if (_st_esos_uiF14Data.u16_RPGPeriod_ms <= _st_esos_uiF14Data.u16_medVelocity && _st_esos_uiF14Data.u16_RPGPeriod_ms > _st_esos_uiF14Data.u16_fastVelocity) {
+          _st_esos_uiF14Data.b_RPGMoving_slow = FALSE;
+          _st_esos_uiF14Data.b_RPGMoving_med = TRUE;
+          _st_esos_uiF14Data.b_RPGMoving_fast = FALSE;
       }
-
-      // Fast
+      // Slow
       else {
-        _st_esos_uiF14Data.b_RPGMoving_slow = FALSE;
-		    _st_esos_uiF14Data.b_RPGMoving_med = FALSE;
-		    _st_esos_uiF14Data.b_RPGMoving_fast = TRUE;
+          _st_esos_uiF14Data.b_RPGMoving_slow = FALSE;
+          _st_esos_uiF14Data.b_RPGMoving_med = FALSE;
+          _st_esos_uiF14Data.b_RPGMoving_fast = TRUE;
       }
 
       // Figure out which direction the RPG is moving (clockwise or counter-clockwise)
@@ -303,7 +307,7 @@ ESOS_USER_TASK( __esos_uiF14_task ) {
       _st_esos_uiF14Data.b_RPGTurning_CCW = FALSE;
     }
 
-    ESOS_TASK_WAIT_TICKS( __ESOS_UIF14_UI_PERIOD_MS );
+    ESOS_TASK_WAIT_TICKS( __ESOS_UIF14_UI_PERIOD_MS ); // Wait 10 ms and run again
   }
   
   ESOS_TASK_END();

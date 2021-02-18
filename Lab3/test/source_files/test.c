@@ -28,6 +28,7 @@ typedef struct {
     BOOL b_RPGTurning_CW;
     BOOL b_RPGTurning_CCW;
 
+    uint16_t u16_noVelocity;
     uint16_t u16_medVelocity;
     uint16_t u16_fastVelocity;
     
@@ -65,8 +66,9 @@ void defaults( void ) {
   _st_esos_uiF14Data.b_RPGTurning_CW = FALSE;
   _st_esos_uiF14Data.b_RPGTurning_CCW = FALSE;
 
-  _st_esos_uiF14Data.u16_medVelocity = 1000;
-  _st_esos_uiF14Data.u16_fastVelocity = 500;
+  _st_esos_uiF14Data.u16_noVelocity = 400; 
+  _st_esos_uiF14Data.u16_medVelocity = 150;
+  _st_esos_uiF14Data.u16_fastVelocity = 15;
 
   _st_esos_uiF14Data.b_LED1On = FALSE;
   _st_esos_uiF14Data.u16_LED1FlashPeriod = 0;
@@ -98,11 +100,17 @@ ESOS_USER_TASK(task1) {
             // THIS NEEDS FIXING
             // Calculate time since last change in RPG. Used to calculate velocity
             _st_esos_uiF14Data.u16_RPGPeriod_ms = (esos_GetSystemTick() - _st_esos_uiF14Data.u16_RPGLastPeriod_ms);
-            //printf("Period: %u\n", _st_esos_uiF14Data.u16_RPGPeriod_ms);
-            //printf("Period Last: %u\n", _st_esos_uiF14Data.u16_RPGLastPeriod_ms);
-            //printf("Timer: %lu\n\n", esos_GetSystemTick());
+
+            // For testing
+            printf("Period: %u\n", _st_esos_uiF14Data.u16_RPGPeriod_ms);
+            printf("Period Last: %u\n", _st_esos_uiF14Data.u16_RPGLastPeriod_ms);
+            printf("Time: %lu\n\n", esos_GetSystemTick());
+
             // Change last period to current period
-            _st_esos_uiF14Data.u16_RPGLastPeriod_ms = _st_esos_uiF14Data.u16_RPGPeriod_ms;
+            //_st_esos_uiF14Data.u16_RPGLastPeriod_ms = _st_esos_uiF14Data.u16_RPGPeriod_ms;
+
+            // New method for getting last period
+            _st_esos_uiF14Data.u16_RPGLastPeriod_ms = esos_GetSystemTick();
 
             // Figure out what speed the RPG is moving (slow, medium, fast)
             //Fast

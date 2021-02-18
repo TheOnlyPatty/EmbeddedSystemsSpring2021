@@ -31,6 +31,7 @@ typedef struct {
     BOOL b_RPGTurning_CW;
     BOOL b_RPGTurning_CCW;
 
+    uint16_t u16_noVelocity;
     uint16_t u16_medVelocity;
     uint16_t u16_fastVelocity;
     
@@ -45,6 +46,7 @@ typedef struct {
     uint16_t i16_lastRPGCounter;
     uint16_t u16_RPGPeriod_ms;
     uint16_t u16_RPGLastPeriod_ms;
+
 } _st_esos_uiF14Data_t;
 
 // DEFINEs and CONSTANTs
