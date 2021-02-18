@@ -143,7 +143,7 @@ env.Append(BUILDERS = {'Hex' : b2h})
 def linker_side_effect(env, program):
   # The linker as of xc16 v1.30 uses a preprocessor by default on linker scripts, which creates a temp file named linker_script.00 (where linker_script is the name of the linker script), which causes parallel builds to fail. This can be disabled via ``--no-cpp``, but then the link fails due to the presence of preprocessor directorive. So, prevent parallel links of the same-named linker script. See http://scons.org/faq.html#How_do_I_prevent_commands_from_being_executed_in_parallel.3F, https://bitbucket.org/scons/scons/wiki/SConsMethods/SideEffect, ``SideEffect`` in http://scons.org/doc/2.5.1/HTML/scons-man.html.
   #
-  # Note that the raw ``be['LINKERSCRIPT']`` string contains un-expanded variables, which makes scons unhappy. For example, providing ``bootloader/pic24_dspic33_bootloader.X/lkr/p${MCU}.gld.00`` as a SideEffect the produces errors like ``Internal Error: no cycle found for node build\esos_microstick2_33EP128GP502\chap14\app_ds1722.elf (<SCons.Node.FS.File object at 0x04A2BC60>) in state pending``. So, produce a full, valid file name using subst.
+  # Note that the raw ``be['LINKERSCRIPT']`` string contains un-expanded variables, which makes scons unhappy. For example, providing ``bootloader/pic24_dspic33_bootloader.X/lkr/p${MCU}.gld.00`` as a SideEffect the produces errors like ``Internal Error: no cycle found for node build\esos_microstick2_33EP128GP502\BUILD_DIR\app_ds1722.elf (<SCons.Node.FS.File object at 0x04A2BC60>) in state pending``. So, produce a full, valid file name using subst.
   linker_temp_file = '/' + env.subst(os.path.basename(env['LINKERSCRIPT'])) + '.00'
   env.SideEffect(linker_temp_file, program)
 #
@@ -227,22 +227,20 @@ def buildTargetsSConscript(
   SConscript('SCons_build.py', exports = 'buildTargets env bin2hex linker_side_effect',
     variant_dir = vdir)
 
-#build only for 33EP512GP806 MCU
-
-buildTargetsSConscript(["source_files"], env.Clone(MCU="33EP512GP806", CPPDEFINES="HARDWARE_PLATFORM=EMBEDDED_F14"), "embeddedF14")
+# Build some selected chapter applications for the CAN2 rev.F14 board used in ECE4723 Embedded Systems
+buildTargetsSConscript(['BUILD_DIR'],
+  env.Clone(MCU='33EP512GP806', CPPDEFINES='HARDWARE_PLATFORM=EMBEDDED_F14'), 'embeddedF14')
 
 # ESOS builds
 # ===========
 def buildTargetsEsos(env, mcu, hardware_platform = 'DEFAULT_DESIGN', hardware_alias = 'default'):
     # Create an environment for building ESOS.
     env = env.Clone(MCU = mcu)
-    env.Append(CPPDEFINES = ['BUILT_ON_ESOS', 'HARDWARE_PLATFORM=' + hardware_platform],
+    env.Append(CPPDEFINES = ['NUM_UART_MODS=1', 'BUILT_ON_ESOS', 'HARDWARE_PLATFORM=' + hardware_platform],
                CPPPATH = ['esos/include', 'esos/include/pic24'])
 
     # Now, invoke a variant build using this environment.
     SConscript('SCons_esos.py', exports = 'env bin2hex linker_side_effect',
       variant_dir = 'build/esos_' + hardware_alias + '_' + mcu)
 
-
 buildTargetsEsos(env, mcu='33EP512GP806', hardware_platform='EMBEDDED_F14', hardware_alias='embeddedF14')
-

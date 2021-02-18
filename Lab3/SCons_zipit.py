@@ -58,12 +58,10 @@ env.Default(env.Zip(zip_file, [
   'chap11',
   'chap12',
   'chap13',
-  'chap14',
+  'BUILD_DIR',
   'esos',
   'lib/lkr',
   'lib/src',
   'lib/include',
   'explorer16_100p',
-  'util',
-  'source_files'
-  ]))
+  'util' ]))

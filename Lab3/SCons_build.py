@@ -58,7 +58,7 @@ PIC24SupportLibSources = [
   'lib/src/pic24_spi.c',
   'lib/src/pic24_timer.c',
   'lib/src/pic24_uart.c',
-  'lib/src/pic24_util.c' ]
+  'lib/src/pic24_util.c']
 
 # Functions used to build the library
 # ===================================
@@ -125,10 +125,11 @@ def buildWithCommonSources(
 # environment.
 PIC24SupportLibObjects = env.Object(PIC24SupportLibSources)
 
-# Definition of target files used in lab 2 
+# Definition of targets
 # =====================
-if 'source_files' in buildTargets:
-  buildWithCommonSources(['source_files/*.c'],
+
+if 'BUILD_DIR' in buildTargets:
+  buildWithCommonSources(['BUILD_DIR/*.c'],
     PIC24SupportLibObjects, env,
-    {'source_files\\main.c'  : { 'CPPDEFINES': ['HARDWARE_PLATFORM=EMBEDDED_F14', 'UART1_RX_INTERRUPT', 'UART1_TX_INTERRUPT', 'BUILT_ON_ESOS']}},
-    'source_files')
+    {'BUILD_DIR\\main.c'  : { 'CPPDEFINES': ['HARDWARE_PLATFORM=EMBEDDED_F14', 'UART1_RX_INTERRUPT', 'UART1_TX_INTERRUPT', 'BUILT_ON_ESOS']}},
+    'BUILD_DIR')
