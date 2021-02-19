@@ -35,6 +35,30 @@ inline BOOL esos_uiF14_getSW1DoublePressed (void) {
     return ((_st_esos_uiF14Data.b_SW1DoublePressed==TRUE) ? TRUE : FALSE);
 }
 
+inline BOOL esos_uiF14_getSW2Pressed (void) {
+    return ((_st_esos_uiF14Data.b_SW2Pressed==TRUE) ? TRUE : FALSE);
+}
+
+inline BOOL esos_uiF14_getSW2Released (void) {
+    return ((_st_esos_uiF14Data.b_SW2Pressed==FALSE) ? TRUE : FALSE);
+}
+
+inline BOOL esos_uiF14_getSW2DoublePressed (void) {
+    return ((_st_esos_uiF14Data.b_SW2DoublePressed==TRUE) ? TRUE : FALSE);
+}
+
+inline BOOL esos_uiF14_getSW3Pressed (void) {
+    return ((_st_esos_uiF14Data.b_SW3Pressed==TRUE) ? TRUE : FALSE);
+}
+
+inline BOOL esos_uiF14_getSW3Released (void) {
+    return ((_st_esos_uiF14Data.b_SW3Pressed==FALSE) ? TRUE : FALSE);
+}
+
+inline BOOL esos_uiF14_getSW3DoublePressed (void) {
+    return ((_st_esos_uiF14Data.b_SW3DoublePressed==TRUE) ? TRUE : FALSE);
+}
+
 /***** SW2 and SW3 need need similar  *****/
 
 // PUBLIC LED FUNCTIONS
@@ -179,8 +203,23 @@ inline BOOL esos_uiF14_isRpgTurningCCW( void ) {
   return _st_esos_uiF14Data.b_RPGTurning_CCW;
 }
 
-int16_t esos_uiF14_getRpgPeriod_u16( void ) {
+inline uint16_t esos_uiF14_getRpgPeriod_u16( void ) {
   return _st_esos_uiF14Data.u16_RPGPeriod_ms;
+}
+
+inline void esos_uiF14_setRPG_noVelocity( uint16_t noVelocity ) {
+    _st_esos_uiF14Data.u16_noVelocity = noVelocity;
+    return;
+}
+
+inline void esos_uiF14_setRPG_medVelocity( uint16_t medVelocity ) {
+    _st_esos_uiF14Data.u16_noVelocity = medVelocity;
+    return;
+}
+
+inline void esos_uiF14_setRPG_fastVelocity( uint16_t fastVelocity ) {
+    _st_esos_uiF14Data.u16_fastVelocity = fastVelocity;
+    return;
 }
 
 void defaults( void ) {
@@ -191,9 +230,9 @@ void defaults( void ) {
   _st_esos_uiF14Data.b_SW3Pressed = FALSE;
   _st_esos_uiF14Data.b_SW3DoublePressed = FALSE;
 
-  _st_esos_uiF14Data.b_RPGAHigh = FALSE;
+  //_st_esos_uiF14Data.b_RPGAHigh = FALSE;
   _st_esos_uiF14Data.b_RPGALast = FALSE;
-  _st_esos_uiF14Data.b_RPGBHigh = FALSE;
+  //_st_esos_uiF14Data.b_RPGBHigh = FALSE;
   _st_esos_uiF14Data.b_RPGBLast = FALSE;
   _st_esos_uiF14Data.b_RPGMoving = FALSE;
   _st_esos_uiF14Data.b_RPGMoving_slow = FALSE;

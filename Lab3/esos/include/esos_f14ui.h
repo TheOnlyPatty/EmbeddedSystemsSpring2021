@@ -20,20 +20,20 @@ typedef struct {
     BOOL b_SW3Pressed;
     BOOL b_SW3DoublePressed;    
     
-    BOOL b_RPGAHigh;
-    BOOL b_RPGALast;
-    BOOL b_RPGBHigh;
-    BOOL b_RPGBLast;
-    BOOL b_RPGMoving;
-    BOOL b_RPGMoving_slow;
-    BOOL b_RPGMoving_med;
-    BOOL b_RPGMoving_fast;
-    BOOL b_RPGTurning_CW;
-    BOOL b_RPGTurning_CCW;
+    //BOOL b_RPGAHigh;
+    BOOL b_RPGALast; // Last signal received from RPGA (0 or 1)
+    //BOOL b_RPGBHigh;
+    BOOL b_RPGBLast; // Last signal received from RPGB (0 or 1)
+    BOOL b_RPGMoving; // Is the RPG moving?
+    BOOL b_RPGMoving_slow; // Is the RPG moving slowly?
+    BOOL b_RPGMoving_med; // Is the RPG moving at a medium speed?
+    BOOL b_RPGMoving_fast; // Is the RPG moving at a medium quickly?
+    BOOL b_RPGTurning_CW; // Is the RPG turning clockwise?
+    BOOL b_RPGTurning_CCW; // Is the RPG turning counter-clockwise?
 
-    uint16_t u16_noVelocity;
-    uint16_t u16_medVelocity;
-    uint16_t u16_fastVelocity;
+    uint16_t u16_noVelocity; // Threshold for no RPG movement
+    uint16_t u16_medVelocity; // Threshold for medium speed RPG movement
+    uint16_t u16_fastVelocity; // Threshold for high speed RPG movement
     
     BOOL b_LED1On;
     uint16_t u16_LED1FlashPeriod;    
@@ -44,8 +44,8 @@ typedef struct {
     
     uint16_t i16_RPGCounter;
     uint16_t i16_lastRPGCounter;
-    uint16_t u16_RPGPeriod_ms;
-    uint16_t u16_RPGLastPeriod_ms;
+    uint16_t u16_RPGPeriod_ms; // Time between RPG movements
+    uint16_t u16_RPGLastPeriod_ms; // Previous time between RPG movements used to approximate velocity
 
 } _st_esos_uiF14Data_t;
 
@@ -53,22 +53,24 @@ typedef struct {
 #define __ESOS_TICKS_TO_MS(x)           (x/1)
 #define __ESOS_MS_TO_TICKS(x)           (x*1)
 #define __ESOS_UIF14_UI_PERIOD_MS       10
-#define __RPG_COUNTER_PER_REV           12
+#define __RPG_TURNS_PER_REV             12
 #define __DEBOUNCE_TIMER                20
 
 // PRIVATE DATA 
  
-_st_esos_uiF14Data_t _st_esos_uiF14Data;
+_st_esos_uiF14Data_t _st_esos_uiF14Data; // Object (I don't know if that's the proper word) definintion
 
 // PRIVATE FUNCTION PROTOTYPES
 
+/* // I don't think these are needed for Lab 3
 uint16_t esos_uiF14_getRPGCounter (void);
 void esos_ui_setRPGCounter (uint16_t);
 
 uint16_t esos_uiF14_getLastRPGCounter (void);
 void esos_ui_setLastRPGCounter (uint16_t);
+*/
 
-//ESOS_USER_TASK(__uiF14_task);
+//ESOS_USER_TASK(__uiF14_task); // ??? Something that was put these by default
 
 // PUBLIC API FUNCTION PROTOTYPES
 
@@ -110,6 +112,9 @@ inline void esos_uiF14_turnYellowLEDOn (void);
 inline void esos_uiF14_turnYellowLEDOff (void);
 
 inline uint16_t esos_uiF14_getRPGValue_u16 (void);
+inline void esos_uiF14_setRPG_noVelocity(uint16_t);
+inline void esos_uiF14_setRPG_medVelocity(uint16_t);
+inline void esos_uiF14_setRPG_fastVelocity(uint16_t);
 inline BOOL esos_uiF14_isRPGTurning (void);
 inline BOOL esos_uiF14_isRPGTurningSlow (void);
 inline BOOL esos_uiF14_isRPGTurningMedium (void);
@@ -146,7 +151,7 @@ void config_esos_uiF14();
 } while (0);
 #define ESOS_TASK_WAIT_UNTIL_UIF14_SW3_DOUBLE_PRESSED()       ESOS_TASK_WAIT_UNTIL( esos_uiF14_isSW3DoublePressed() )
 
-/*
+/* // I don't these these are needed for Lab 3
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS()          // not yet implemented
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS_CW()       // not yet implemented
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_UNTIL_TURNS_CCW()      // not yet implemented

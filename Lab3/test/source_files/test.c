@@ -17,9 +17,9 @@ typedef struct {
     BOOL b_SW3Pressed;
     BOOL b_SW3DoublePressed;    
     
-    BOOL b_RPGAHigh;
+    //BOOL b_RPGAHigh;
     BOOL b_RPGALast;
-    BOOL b_RPGBHigh;
+    //BOOL b_RPGBHigh;
     BOOL b_RPGBLast;
     BOOL b_RPGMoving;
     BOOL b_RPGMoving_slow;
