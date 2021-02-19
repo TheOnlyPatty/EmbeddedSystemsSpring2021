@@ -7,7 +7,7 @@
  * ****************************************************************/
 
 #ifndef   ESOS_UIF14_H
-#define ESOS_UIF14_H
+#define ESOS_UIF14_H //What are these lines doing?
 
 // STRUCTURES
 
@@ -15,9 +15,9 @@ typedef struct {
     BOOL b_SW1Pressed;
     BOOL b_SW1DoublePressed;
     BOOL b_SW2Pressed;
-    BOOL b_SW1DoublePressed;    
+    BOOL b_SW2DoublePressed;
     BOOL b_SW3Pressed;
-    BOOL b_SW1DoublePressed;    
+    BOOL b_SW3DoublePressed;    
     
     BOOL b_RPGAHigh;
     BOOL b_RPGBHigh;
@@ -131,6 +131,22 @@ int16_t esos_uiF14_getRPGVelocity_i16 (void);
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_REV(y)           // not yet implemented
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CW_REV(y)        // not yet implemented
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y)       // not yet implemented
+
+#define UPDATE_LED(num)
+{
+    if(_st_esos_uiF14Data.u16_LED##num##FlashPeriod != 0) {
+        LED##num## = !LED##num##;
+        ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED##num##FlashPeriod / 2);
+    }
+    else {
+        if(_st_esos_uiF14Data.b_LED##num##On == TRUE) {
+            LED##num## = TRUE;
+        }
+        else {
+            LED##num## = FALSE;
+        }
+    }
+}
 
 
 #endif    // ESOS_UIF14_H
