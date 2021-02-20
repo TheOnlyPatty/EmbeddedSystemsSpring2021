@@ -194,10 +194,13 @@ inline void esos_uiF14_setRPG_fastVelocity( uint16_t fastVelocity ) {
 void init_defaults( void ) { // Set default values
     _st_esos_uiF14Data.b_SW1Pressed = FALSE;
     _st_esos_uiF14Data.b_SW1DoublePressed = FALSE;
+    _st_esos_uiF14Data.u16_SW1DoublePressedPeriod = 500;
     _st_esos_uiF14Data.b_SW2Pressed = FALSE;
     _st_esos_uiF14Data.b_SW2DoublePressed = FALSE;
+    _st_esos_uiF14Data.u16_SW2DoublePressedPeriod = 500;
     _st_esos_uiF14Data.b_SW3Pressed = FALSE;
     _st_esos_uiF14Data.b_SW3DoublePressed = FALSE;
+    _st_esos_uiF14Data.u16_SW3DoublePressedPeriod = 500;
 
     //_st_esos_uiF14Data.b_RPGAHigh = FALSE;
     _st_esos_uiF14Data.b_RPGALast = FALSE;
@@ -235,9 +238,9 @@ ESOS_USER_TASK( __esos_uiF14_task ) {
     while(TRUE) {
         // do your UI stuff here
 
-        LED1 = _st_esos_uiF14Data.b_LED1On;
-        LED2 = _st_esos_uiF14Data.b_LED2On;
-        LED3 = _st_esos_uiF14Data.b_LED3On;
+//        LED1 = _st_esos_uiF14Data.b_LED1On;
+//        LED2 = _st_esos_uiF14Data.b_LED2On;
+//        LED3 = _st_esos_uiF14Data.b_LED3On;
 
 
         /* BEGIN SWITCH STUFF IF THAT'S HOW YOU WANNA DO IT */
@@ -353,11 +356,9 @@ ESOS_USER_TASK(update_LED3) {
 ESOS_USER_TIMER(SW_Update)
 {
     // Debounce Switches
-    SW1_DEBOUNCED = SW1;
-    SW2_DEBOUNCED = SW2;
-    SW3_DEBOUNCED = SW3;
-//    __SW2_CLEAN_PIN = SW2_PRESSED;
-//    __SW3_CLEAN_PIN = SW3_PRESSED;
+    SW1_DEBOUNCED = SW1_PRESSED;
+    SW2_DEBOUNCED = SW2_PRESSED;
+    SW3_DEBOUNCED = SW3_PRESSED;
 
     // Check Double Press Timers
     if (SW1_IC_BUFFER > _st_esos_uiF14Data.u16_SW1DoublePressedPeriod) {
@@ -373,12 +374,33 @@ ESOS_USER_TIMER(SW_Update)
 
 ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11)
 {
+    BOOL debounce = SW1_DEBOUNCED;
+    _st_esos_uiF14Data.b_LED2On = 1;
+    
+
+    // Determine if the event was a button press
+    if (debounce) {
+        _st_esos_uiF14Data.b_SW1Pressed = 1;
+        _st_esos_uiF14Data.b_SW1DoublePressed = 0;
+        if (IC11CON2bits.ICTRIG == 0) {
+            if(SW1_IC_BUFFER / CYCLES_PER_MS < _st_esos_uiF14Data.u16_SW1DoublePressedPeriod) {
+                _st_esos_uiF14Data.b_SW1DoublePressed = 1;
+                LED1_ON();
+            }
+        }
+        else {
+            LED1_OFF();
+            SW_IC_BUFFER_RESET(11,12);
+            IC11CON2bits.ICTRIG = IC12CON2bits.ICTRIG = 0; //resume IC
+        }
+    }
+    else _st_esos_uiF14Data.b_SW1Pressed = FALSE;
     
     ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC11);
 }
 ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13)
 {
-    
+    _st_esos_uiF14Data.b_LED2On = 0;
     ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC13);
 }
 ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15)
@@ -403,7 +425,7 @@ void config_esos_uiF14() {
     
     esos_RegisterTask(__esos_uiF14_task);
     
-    esos_RegisterTimer(SW_Update, 50);
+    esos_RegisterTimer(SW_Update, 60);
     
     esos_RegisterTask(update_LED1);
     esos_RegisterTask(update_LED2);
