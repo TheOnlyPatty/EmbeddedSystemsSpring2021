@@ -19,6 +19,13 @@ ESOS_USER_TASK(rpg) {
             esos_uiF14_turnLED2Off();
         }
 
+        if (esos_uiF14_isRPGTurningCW() == TRUE) {
+            printf("\n\nCLOCKWISE\n\n");
+        }
+        if (esos_uiF14_isRPGTurningCCW() == TRUE) {
+            printf("\n\nCOUNTER-CLOCKWISE\n\n");
+        }
+
         ESOS_TASK_YIELD();
     }
     ESOS_TASK_END();
