@@ -6,10 +6,10 @@
  *
  * ****************************************************************/
 
-#include "esos_f14ui.h"
-#include "revF14.h"
 #include "esos.h"
 #include "esos_pic24.h"
+#include "revF14.h"
+#include "esos_f14ui.h"
 #include <stdio.h>
 
 volatile _st_esos_uiF14Data_t _st_esos_uiF14Data;
@@ -94,7 +94,6 @@ inline void esos_uiF14_turnLED1Off (void) {
 }
 inline void esos_uiF14_toggleLED1 (void) {
     _st_esos_uiF14Data.b_LED1On ^= 1;
-    LED1 = !LED1;
     return;
 }
 inline void esos_uiF14_flashLED1( uint16_t u16_period) {
@@ -120,7 +119,6 @@ inline void esos_uiF14_turnLED2Off (void) {
 }
 inline void esos_uiF14_toggleLED2 (void) {
     _st_esos_uiF14Data.b_LED2On ^= 1;
-    LED2 = !LED2;
     return;
 }
 inline void esos_uiF14_flashLED2( uint16_t u16_period) {
@@ -146,7 +144,6 @@ inline void esos_uiF14_turnLED3Off (void) {
 }
 inline void esos_uiF14_toggleLED3 (void) {
     _st_esos_uiF14Data.b_LED3On ^= 1;
-    LED3 = !LED3;
     return;
 }
 inline void esos_uiF14_flashLED3( uint16_t u16_period) {
@@ -319,90 +316,37 @@ ESOS_USER_TASK( __esos_uiF14_task ) {
 }
 
 
-
 ESOS_USER_TASK(update_LED1) {
-    //define any local vars here
     ESOS_TASK_BEGIN();
-        if(_st_esos_uiF14Data.u16_LED1FlashPeriod != 0) {
-            LED1 = !LED1;
-            ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED1FlashPeriod / 2);
-        }
-        else {
-            if(_st_esos_uiF14Data.b_LED1On == TRUE) {
-                LED1 = TRUE;
-            }
-            else {
-                LED1 = FALSE;
-            }
-        }
-        if(_st_esos_uiF14Data.u16_LED1FlashPeriod != 0) {
-            LED1 = !LED1;
-            ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED1FlashPeriod / 2);
-        }
-        else {
-            if(_st_esos_uiF14Data.b_LED1On == TRUE) {
-                LED1 = TRUE;
-            }
-            else {
-                LED1 = FALSE;
-            }
-        }
+    while(1) {
+        if(_st_esos_uiF14Data.u16_LED1FlashPeriod != 0) _st_esos_uiF14Data.b_LED1On ^= 1;
+        if(_st_esos_uiF14Data.b_LED1On == TRUE) LED1_ON();
+        else LED1_OFF();
+        if(_st_esos_uiF14Data.u16_LED1FlashPeriod != 0) ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED1FlashPeriod / 2);
+        ESOS_TASK_YIELD();
+    }
     ESOS_TASK_END();
 }
 ESOS_USER_TASK(update_LED2) {
-    //define any local vars here
     ESOS_TASK_BEGIN();
-        if(_st_esos_uiF14Data.u16_LED2FlashPeriod != 0) {
-            LED2 = !LED2;
-            ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED2FlashPeriod / 2);
-        }
-        else {
-            if(_st_esos_uiF14Data.b_LED2On == TRUE) {
-                LED2 = TRUE;
-            }
-            else {
-                LED2 = FALSE;
-            }
-        }       if(_st_esos_uiF14Data.u16_LED2FlashPeriod != 0) {
-            LED2 = !LED2;
-            ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED2FlashPeriod / 2);
-        }
-        else {
-            if(_st_esos_uiF14Data.b_LED2On == TRUE) {
-                LED2 = TRUE;
-            }
-            else {
-                LED2 = FALSE;
-            }
-        }
+    while(1) {
+        if(_st_esos_uiF14Data.u16_LED2FlashPeriod != 0) _st_esos_uiF14Data.b_LED2On ^= 1;
+        if(_st_esos_uiF14Data.b_LED2On == TRUE) LED2_ON();
+        else LED2_OFF();
+        if(_st_esos_uiF14Data.u16_LED2FlashPeriod != 0) ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED2FlashPeriod / 2);
+        ESOS_TASK_YIELD();
+    }
     ESOS_TASK_END();
 }
 ESOS_USER_TASK(update_LED3) {
-    //define any local vars here
     ESOS_TASK_BEGIN();
-        if(_st_esos_uiF14Data.u16_LED3FlashPeriod != 0) {
-            LED3 = !LED3;
-            ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED3FlashPeriod / 2);
-        }
-        else {
-            if(_st_esos_uiF14Data.b_LED3On == TRUE) {
-                LED3 = TRUE;
-            }
-            else {
-                LED3 = FALSE;
-            }
-        }       if(_st_esos_uiF14Data.u16_LED3FlashPeriod != 0) {
-            LED3 = !LED3;
-            ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED3FlashPeriod / 2);
-        }
-        else {
-            if(_st_esos_uiF14Data.b_LED3On == TRUE) {
-                LED3 = TRUE;
-            }
-            else {
-                LED3 = FALSE;
-            }
-        }
+    while(1) {
+        if(_st_esos_uiF14Data.u16_LED3FlashPeriod != 0) _st_esos_uiF14Data.b_LED3On ^= 1;
+        if(_st_esos_uiF14Data.b_LED3On == TRUE) LED3_ON();
+        else LED3_OFF();
+        if(_st_esos_uiF14Data.u16_LED3FlashPeriod != 0) ESOS_TASK_WAIT_TICKS(_st_esos_uiF14Data.u16_LED3FlashPeriod / 2);
+        ESOS_TASK_YIELD();
+    }
     ESOS_TASK_END();
 }
 
@@ -410,31 +354,37 @@ ESOS_USER_TIMER(SW_Update)
 {
     // Debounce Switches
     SW1_DEBOUNCED = SW1;
+    SW2_DEBOUNCED = SW2;
+    SW3_DEBOUNCED = SW3;
 //    __SW2_CLEAN_PIN = SW2_PRESSED;
 //    __SW3_CLEAN_PIN = SW3_PRESSED;
 
     // Check Double Press Timers
     if (SW1_IC_BUFFER > _st_esos_uiF14Data.u16_SW1DoublePressedPeriod) {
-        IC11CON2bits.ICTRIG = IC12CON2bits.ICTRIG = 1;
-        IC11CON1bits.ICM = IC12CON1bits.ICM = 0b000;                             \
-        IC11CON1bits.ICM = IC12CON1bits.ICM = 0b001;
+        SW_IC_BUFFER_RESET(11,12);
     }
-
-//    if (__SW2_TIMER_VAL / CYCLES_PER_MS > _st_esos_uiF14Data.u16_SW2DoublePressedPeriod) {
-//        IC13CON2bits.ICTRIG = IC14CON2bits.ICTRIG = 1;
-//        __SW2_TIMER_RESET();
-//    }
-//
-//    if (__SW3_TIMER_VAL / CYCLES_PER_MS > _st_esos_uiF14Data.u16_SW3DoublePressedPeriod) {
-//        IC15CON2bits.ICTRIG = IC16CON2bits.ICTRIG = 1;
-//        __SW3_TIMER_RESET();
-//    }
+    if (SW2_IC_BUFFER > _st_esos_uiF14Data.u16_SW2DoublePressedPeriod) {
+        SW_IC_BUFFER_RESET(13,14);
+    }
+    if (SW3_IC_BUFFER > _st_esos_uiF14Data.u16_SW3DoublePressedPeriod) {
+        SW_IC_BUFFER_RESET(15,16);
+    }
 }
 
 ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11)
 {
-    LED1_ON();
+    
     ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC11);
+}
+ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13)
+{
+    
+    ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC13);
+}
+ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15)
+{
+
+    ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC15);
 }
 
 // UIF14 INITIALIZATION FUNCTION
@@ -446,10 +396,9 @@ void config_esos_uiF14() {
     CONFIG_LED1();
     CONFIG_LED2();
     CONFIG_LED3();
-//    CONFIG_SW1();
     CONFIG_SW1_DEBOUNCE_AND_IC();
-    CONFIG_SW2();
-    CONFIG_SW3();
+    CONFIG_SW2_DEBOUNCE_AND_IC();
+    CONFIG_SW3_DEBOUNCE_AND_IC();
     CONFIG_RPG();
     
     esos_RegisterTask(__esos_uiF14_task);

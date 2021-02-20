@@ -67,51 +67,51 @@ ESOS_USER_TASK(interface)
 //
 //			// Set next state based on selection
 //			switch (u8_input) {
-//				
+//
 //			case '1':
 //				MENU_STATE = S_SW1;
 //				break;
-//				
+//
 //			case '2':
 //				MENU_STATE = S_SW2;
 //				break;
-//				
+//
 //			case '3':
 //				MENU_STATE = S_SW3;
 //				break;
-//				
+//
 //			case '4':
 //				MENU_STATE = SLOW;
 //				break;
-//				
+//
 //			case '5':
 //				MENU_STATE = MED;
 //				break;
-//				
+//
 //			case '6':
 //				MENU_STATE = FAST;
 //				break;
-//				
+//
 //			default:
 //				MENU_STATE = BASE;
 //				break;
 //			}
 //		}
-//			
+//
 //		//SW1
 //		else if (MENU_STATE == S_SW1) {
-//			
-//			
+//
+//
 //			uint16_t u16_sw1_period_val;
 //			u16_sw1_period_val = esos_uiF14_getSW1DoublePressedPeriod();
-//			
+//
 //			// Print menu options
 //			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW1_DIS);
 //			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)u16_sw1_period_val);
 //			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
 //			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 //
@@ -136,20 +136,20 @@ ESOS_USER_TASK(interface)
 //				break;
 //			}
 //		}
-//		
+//
 //		//SW2
 //		else if (MENU_STATE == S_SW2) {
-//			
+//
 //			uint16_t u16_sw2_period_val;
 //			u16_sw2_period_val = esos_uiF14_getSW2DoublePressedPeriod();
-//			
+//
 //			// Print menu options
 //			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW2_DIS);
 //			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)u16_sw2_period_val);
 //			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
 //			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 //
@@ -174,20 +174,20 @@ ESOS_USER_TASK(interface)
 //				break;
 //			}
 //		}
-//		
+//
 //		//SW3
 //		else if (MENU_STATE == S_SW3) {
-//			
+//
 //			uint16_t u16_sw3_period_val;
 //			u16_sw3_period_val = esos_uiF14_getSW3DoublePressedPeriod();
-//			
+//
 //			// Print menu options
 //			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW3_DIS);
 //			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)u16_sw3_period_val);
 //			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
 //			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 //
@@ -212,20 +212,20 @@ ESOS_USER_TASK(interface)
 //				break;
 //			}
 //		}
-//		
+//
 //		//RPG SLOW
 //		else if (MENU_STATE == SLOW) {
-//			
+//
 //			uint16_t i16_rpg_slow_val;
 //			i16_rpg_slow_val = esos_uiF14_getRPGSlowThreshold();
-//			
+//
 //			// Print menu options
 //			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_SLOW_DIS);
 //			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)i16_rpg_slow_val);
 //			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
 //			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 //
@@ -250,20 +250,20 @@ ESOS_USER_TASK(interface)
 //				break;
 //			}
 //		}
-//		
+//
 //		//RPG MED
 //		else if (MENU_STATE == MED) {
-//			
+//
 //			uint16_t i16_rpg_med_val;
 //			i16_rpg_med_val = esos_uiF14_getRPGMediumThreshold(); //WES: changed from slow to med. Typo?
-//			
+//
 //			// Print menu options
 //			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_MED_DIS);
 //			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)i16_rpg_med_val);
 //			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
 //			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 //
@@ -288,20 +288,20 @@ ESOS_USER_TASK(interface)
 //				break;
 //			}
 //		}
-//		
+//
 //		//RPG FAST
 //		else if (MENU_STATE == FAST) {
-//			
+//
 //			uint16_t i16_rpg_fast_val;
 //			i16_rpg_fast_val = esos_uiF14_getRPGFastThreshold();
-//			
+//
 //			// Print menu options
 //			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_FAST_DIS);
 //			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)i16_rpg_fast_val);
 //			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
-//			
+//
 //			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
 //			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 //
@@ -326,7 +326,7 @@ ESOS_USER_TASK(interface)
 //				break;
 //			}
 //		}
-//		
+//
 //
 //		// Print separator
 //		ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();

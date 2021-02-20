@@ -38,9 +38,9 @@
 #define LED3_ON() (LED3 = 0)
 #define LED3_OFF() (LED3 = 1)
 
-#define SW1 (!_RB13)
-#define SW2 (!_RB12)
-#define SW3 (!_RC15)
+#define SW1 (_RB13)
+#define SW2 (_RB12)
+#define SW3 (_RC15)
 
 
 
@@ -60,8 +60,8 @@
 
 #define CONFIG_SW3()                                                                                               \
 {                                                                                                                  \
-    CONFIG_RB15_AS_DIG_INPUT();                                                                                    \
-    ENABLE_RB15_PULLUP();                                                                                          \
+    CONFIG_RC15_AS_DIG_INPUT();                                                                                    \
+    ENABLE_RC15_PULLUP();                                                                                          \
     DELAY_US(1);                                                                                                   \
 }
 

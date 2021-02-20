@@ -175,6 +175,10 @@ void init_defaults();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y)       // not yet implemented
 */
 
+#define SW1_ICS 11,12
+#define SW2_ICS 13,14
+#define SW3_ICS 15,16
+
 #define CONFIG_IC_SW(pin, ICodd, ICeven)                                         \
     {                                                                            \
         _IC##ICodd##R = pin;                                                     \
@@ -187,20 +191,43 @@ void init_defaults();
         IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b001;              \
     }
 
+#define SW_IC_BUFFER_RESET(ICodd, ICeven)                                        \
+    {                                                                            \
+        IC##ICodd##CON2bits.ICTRIG = IC##ICeven##CON2bits.ICTRIG = 1;            \
+        IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b000;              \
+        IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b001;              \
+    }                                                                            \
+
 #define SW1_DEBOUNCED _RD1
 #define SW1_IC_BUFFER (((uint32_t)IC12TMR << 16) | (uint32_t)IC11TMR)
-//#define __SW1_TIMER_RESET()                                                      \
-//    {                                                                            \
-//        IC11CON1bits.ICM = IC12CON1bits.ICM = 0b000;                             \
-//        IC11CON1bits.ICM = IC12CON1bits.ICM = 0b001;                             \
-//    }
 #define CONFIG_SW1_DEBOUNCE_AND_IC()                                             \
     {                                                                            \
         CONFIG_SW1();                                                            \
         CONFIG_RD1_AS_DIG_OUTPUT();                                              \
         CONFIG_IC_SW(RD1_RP, 11, 12);                                            \
         ESOS_REGISTER_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11, ESOS_USER_IRQ_LEVEL1, _IC11Interrupt);   \
-        ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11);                   \
+        ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11);                  \
+    }
+
+#define SW2_DEBOUNCED _RD2
+#define SW2_IC_BUFFER (((uint32_t)IC14TMR << 16) | (uint32_t)IC13TMR)
+#define CONFIG_SW2_DEBOUNCE_AND_IC()                                             \
+    {                                                                            \
+        CONFIG_SW2();                                                            \
+        CONFIG_RD2_AS_DIG_OUTPUT();                                              \
+        CONFIG_IC_SW(RD2_RP, 13, 14);                                            \
+        ESOS_REGISTER_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13, ESOS_USER_IRQ_LEVEL1, _IC13Interrupt);   \
+        ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13);                   \
+    }
+#define SW3_DEBOUNCED _RD3
+#define SW3_IC_BUFFER (((uint32_t)IC16TMR << 16) | (uint32_t)IC15TMR)
+#define CONFIG_SW3_DEBOUNCE_AND_IC()                                             \
+    {                                                                            \
+        CONFIG_SW3();                                                            \
+        CONFIG_RD3_AS_DIG_OUTPUT();                                              \
+        CONFIG_IC_SW(RD3_RP, 15, 16);                                            \
+        ESOS_REGISTER_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15, ESOS_USER_IRQ_LEVEL1, _IC15Interrupt);   \
+        ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15);                   \
     }
 
 #endif    // ESOS_UIF14_H
