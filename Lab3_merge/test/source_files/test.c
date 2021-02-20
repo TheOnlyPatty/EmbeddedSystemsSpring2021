@@ -7,6 +7,9 @@
 #include "pic24_timer.h"
 #include "esos_comm.h"
 
+#ifndef __dsPIC33EP512GP806__
+#define __dsPIC33EP512GP806__
+#endif
 
 inline void IO_config() {
     __esos_unsafe_PutString(HELLO_MSG);
