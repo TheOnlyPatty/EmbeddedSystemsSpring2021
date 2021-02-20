@@ -175,27 +175,11 @@ void init_defaults();
 #define ESOS_TASK_WAIT_UNTIL_UIF14_RPG_MAKES_CCW_REV(y)       // not yet implemented
 */
 
-#define SW1_ICS 11,12
-#define SW2_ICS 13,14
-#define SW3_ICS 15,16
-
-#define CONFIG_IC_SW(pin, ICodd, ICeven)                                         \
+#define SW_IC_BUFFER_RESET(ODD, EVEN)                                        \
     {                                                                            \
-        _IC##ICodd##R = pin;                                                     \
-        IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b000;              \
-        IC##ICodd##CON1bits.ICTSEL = IC##ICeven##CON1bits.ICTSEL = 0b111;        \
-        IC##ICodd##CON2bits.IC32 = IC##ICeven##CON2bits.IC32 = 1;                \
-        IC##ICodd##CON2bits.ICTRIG = IC##ICeven##CON2bits.ICTRIG = 1;            \
-        IC##ICodd##CON2bits.SYNCSEL = IC##ICeven##CON2bits.SYNCSEL = 0b00000;    \
-        IC##ICodd##CON1bits.ICI = 0b00;                                          \
-        IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b001;              \
-    }
-
-#define SW_IC_BUFFER_RESET(ICodd, ICeven)                                        \
-    {                                                                            \
-        IC##ICodd##CON2bits.ICTRIG = IC##ICeven##CON2bits.ICTRIG = 1;            \
-        IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b000;              \
-        IC##ICodd##CON1bits.ICM = IC##ICeven##CON1bits.ICM = 0b001;              \
+        IC##ODD##CON2bits.ICTRIG = IC##EVEN##CON2bits.ICTRIG = 1;            \
+        IC##ODD##CON1bits.ICM = IC##EVEN##CON1bits.ICM = 0b000;              \
+        IC##ODD##CON1bits.ICM = IC##EVEN##CON1bits.ICM = 0b001;              \
     }                                                                            \
 
 #define SW1_DEBOUNCED _RD1
@@ -204,7 +188,14 @@ void init_defaults();
     {                                                                            \
         CONFIG_SW1();                                                            \
         CONFIG_RD1_AS_DIG_OUTPUT();                                              \
-        CONFIG_IC_SW(RD1_RP, 11, 12);                                            \
+        _IC11R = RD1_RP;                                                         \
+        IC11CON1bits.ICM = IC12CON1bits.ICM = 0b000;                             \
+        IC11CON1bits.ICTSEL = IC12CON1bits.ICTSEL = 0b111;                       \
+        IC11CON2bits.IC32 = IC12CON2bits.IC32 = 1;                               \
+        IC11CON2bits.ICTRIG = IC12CON2bits.ICTRIG = 1;                           \
+        IC11CON2bits.SYNCSEL = IC12CON2bits.SYNCSEL = 0b00000;                   \
+        IC11CON1bits.ICI = 0b00;                                                 \
+        IC11CON1bits.ICM = IC12CON1bits.ICM = 0b001;                             \
         ESOS_REGISTER_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11, ESOS_USER_IRQ_LEVEL1, _IC11Interrupt);   \
         ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11);                  \
     }
@@ -215,7 +206,14 @@ void init_defaults();
     {                                                                            \
         CONFIG_SW2();                                                            \
         CONFIG_RD2_AS_DIG_OUTPUT();                                              \
-        CONFIG_IC_SW(RD2_RP, 13, 14);                                            \
+        _IC13R = RD2_RP;                                                         \
+        IC13CON1bits.ICM = IC14CON1bits.ICM = 0b000;                             \
+        IC13CON1bits.ICTSEL = IC14CON1bits.ICTSEL = 0b111;                       \
+        IC13CON2bits.IC32 = IC14CON2bits.IC32 = 1;                               \
+        IC13CON2bits.ICTRIG = IC14CON2bits.ICTRIG = 1;                           \
+        IC13CON2bits.SYNCSEL = IC14CON2bits.SYNCSEL = 0b00000;                   \
+        IC13CON1bits.ICI = 0b00;                                                 \
+        IC13CON1bits.ICM = IC14CON1bits.ICM = 0b001;                             \
         ESOS_REGISTER_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13, ESOS_USER_IRQ_LEVEL1, _IC13Interrupt);   \
         ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13);                   \
     }
@@ -225,7 +223,14 @@ void init_defaults();
     {                                                                            \
         CONFIG_SW3();                                                            \
         CONFIG_RD3_AS_DIG_OUTPUT();                                              \
-        CONFIG_IC_SW(RD3_RP, 15, 16);                                            \
+        _IC15R = RD3_RP;                                                         \
+        IC15CON1bits.ICM = IC16CON1bits.ICM = 0b000;                             \
+        IC15CON1bits.ICTSEL = IC16CON1bits.ICTSEL = 0b111;                       \
+        IC15CON2bits.IC32 = IC16CON2bits.IC32 = 1;                               \
+        IC15CON2bits.ICTRIG = IC16CON2bits.ICTRIG = 1;                           \
+        IC15CON2bits.SYNCSEL = IC16CON2bits.SYNCSEL = 0b00000;                   \
+        IC15CON1bits.ICI = 0b00;                                                 \
+        IC15CON1bits.ICM = IC16CON1bits.ICM = 0b001;                             \
         ESOS_REGISTER_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15, ESOS_USER_IRQ_LEVEL1, _IC15Interrupt);   \
         ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15);                   \
     }

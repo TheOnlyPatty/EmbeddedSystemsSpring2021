@@ -355,57 +355,83 @@ ESOS_USER_TASK(update_LED3) {
 
 ESOS_USER_TIMER(SW_Update)
 {
-    // Debounce Switches
+    //Check switches every 60ms and use their value at that moment as a debounced switch value
     SW1_DEBOUNCED = SW1_PRESSED;
     SW2_DEBOUNCED = SW2_PRESSED;
     SW3_DEBOUNCED = SW3_PRESSED;
+    
+    _st_esos_uiF14Data.b_SW1Pressed = SW1_DEBOUNCED;
+    _st_esos_uiF14Data.b_SW2Pressed = SW2_DEBOUNCED;
+    _st_esos_uiF14Data.b_SW3Pressed = SW3_DEBOUNCED;
+    
+//    if(_st_esos_uiF14Data.b_SW1Pressed) esos_uiF14_turnLED1On();
+//    else esos_uiF14_turnLED1Off();
+//    if(_st_esos_uiF14Data.b_SW2Pressed) esos_uiF14_turnLED2On();
+//    else esos_uiF14_turnLED2Off();
+//    if(_st_esos_uiF14Data.b_SW3Pressed) esos_uiF14_turnLED3On();
+//    else esos_uiF14_turnLED3Off();
 
-    // Check Double Press Timers
-    if (SW1_IC_BUFFER > _st_esos_uiF14Data.u16_SW1DoublePressedPeriod) {
-        SW_IC_BUFFER_RESET(11,12);
-    }
-    if (SW2_IC_BUFFER > _st_esos_uiF14Data.u16_SW2DoublePressedPeriod) {
-        SW_IC_BUFFER_RESET(13,14);
-    }
-    if (SW3_IC_BUFFER > _st_esos_uiF14Data.u16_SW3DoublePressedPeriod) {
-        SW_IC_BUFFER_RESET(15,16);
-    }
+    //Reset IC Buffers if only a single press occurred
+    if (SW1_IC_BUFFER / CYCLES_PER_MS >= _st_esos_uiF14Data.u16_SW1DoublePressedPeriod) SW_IC_BUFFER_RESET(11,12);
+    if (SW2_IC_BUFFER / CYCLES_PER_MS >= _st_esos_uiF14Data.u16_SW2DoublePressedPeriod) SW_IC_BUFFER_RESET(13,14);
+    if (SW3_IC_BUFFER / CYCLES_PER_MS >= _st_esos_uiF14Data.u16_SW3DoublePressedPeriod) SW_IC_BUFFER_RESET(15,16);
 }
 
-ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11)
+ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC11) //Interrupt for SW1 press
 {
-    BOOL debounce = SW1_DEBOUNCED;
-    _st_esos_uiF14Data.b_LED2On = 1;
-    
-
-    // Determine if the event was a button press
+    BOOL debounce = !SW1_DEBOUNCED;
     if (debounce) {
-        _st_esos_uiF14Data.b_SW1Pressed = 1;
+//        _st_esos_uiF14Data.b_SW1Pressed = 1;
         _st_esos_uiF14Data.b_SW1DoublePressed = 0;
         if (IC11CON2bits.ICTRIG == 0) {
             if(SW1_IC_BUFFER / CYCLES_PER_MS < _st_esos_uiF14Data.u16_SW1DoublePressedPeriod) {
                 _st_esos_uiF14Data.b_SW1DoublePressed = 1;
-                LED1_ON();
+//                esos_uiF14_turnLED1On();
             }
         }
         else {
-            LED1_OFF();
             SW_IC_BUFFER_RESET(11,12);
             IC11CON2bits.ICTRIG = IC12CON2bits.ICTRIG = 0; //resume IC
         }
     }
-    else _st_esos_uiF14Data.b_SW1Pressed = FALSE;
-    
     ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC11);
 }
-ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13)
+ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC13) //Interrupt for SW2 press
 {
-    _st_esos_uiF14Data.b_LED2On = 0;
+    BOOL debounce = !SW2_DEBOUNCED;
+    if (debounce) {
+//        _st_esos_uiF14Data.b_SW2Pressed = 1;
+        _st_esos_uiF14Data.b_SW2DoublePressed = 0;
+        if (IC13CON2bits.ICTRIG == 0) {
+            if(SW2_IC_BUFFER / CYCLES_PER_MS < _st_esos_uiF14Data.u16_SW2DoublePressedPeriod) {
+                _st_esos_uiF14Data.b_SW2DoublePressed = 1;
+//                esos_uiF14_turnLED2On();
+            }
+        }
+        else {
+            SW_IC_BUFFER_RESET(13,14);
+            IC13CON2bits.ICTRIG = IC14CON2bits.ICTRIG = 0; //resume IC
+        }
+    }
     ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC13);
 }
-ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15)
+ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15) //Interrupt for SW3 press
 {
-
+    BOOL debounce = !SW3_DEBOUNCED;
+    if (debounce) {
+//        _st_esos_uiF14Data.b_SW3Pressed = 1;
+        _st_esos_uiF14Data.b_SW3DoublePressed = 0;
+        if (IC15CON2bits.ICTRIG == 0) {
+            if(SW3_IC_BUFFER / CYCLES_PER_MS < _st_esos_uiF14Data.u16_SW3DoublePressedPeriod) {
+                _st_esos_uiF14Data.b_SW3DoublePressed = 1;
+//                esos_uiF14_turnLED3On();
+            }
+        }
+        else {
+            SW_IC_BUFFER_RESET(15,16);
+            IC15CON2bits.ICTRIG = IC16CON2bits.ICTRIG = 0; //resume IC
+        }
+    }
     ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_IC15);
 }
 
@@ -426,7 +452,7 @@ void config_esos_uiF14() {
     esos_RegisterTask(__esos_uiF14_task);
     
     esos_RegisterTimer(SW_Update, 60);
-    
+
     esos_RegisterTask(update_LED1);
     esos_RegisterTask(update_LED2);
     esos_RegisterTask(update_LED3);
