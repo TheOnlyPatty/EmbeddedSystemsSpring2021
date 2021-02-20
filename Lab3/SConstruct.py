@@ -141,9 +141,20 @@ env.Append(BUILDERS = {'Hex' : b2h})
 # Linker dependencies
 # -------------------
 def linker_side_effect(env, program):
-  # The linker as of xc16 v1.30 uses a preprocessor by default on linker scripts, which creates a temp file named linker_script.00 (where linker_script is the name of the linker script), which causes parallel builds to fail. This can be disabled via ``--no-cpp``, but then the link fails due to the presence of preprocessor directorive. So, prevent parallel links of the same-named linker script. See http://scons.org/faq.html#How_do_I_prevent_commands_from_being_executed_in_parallel.3F, https://bitbucket.org/scons/scons/wiki/SConsMethods/SideEffect, ``SideEffect`` in http://scons.org/doc/2.5.1/HTML/scons-man.html.
-  #
-  # Note that the raw ``be['LINKERSCRIPT']`` string contains un-expanded variables, which makes scons unhappy. For example, providing ``bootloader/pic24_dspic33_bootloader.X/lkr/p${MCU}.gld.00`` as a SideEffect the produces errors like ``Internal Error: no cycle found for node build\esos_microstick2_33EP128GP502\BUILD_DIR\app_ds1722.elf (<SCons.Node.FS.File object at 0x04A2BC60>) in state pending``. So, produce a full, valid file name using subst.
+
+# The linker as of xc16 v1.30 uses a preprocessor by default on linker scripts, which creates a temp file
+# named linker_script.00 (where linker_script is the name of the linker script), which causes parallel
+# builds to fail. This can be disabled via ``--no-cpp``, but then the link fails due to the presence of
+# preprocessor directorive. So, prevent parallel links of the same-named linker script.
+# See http://scons.org/faq.html#How_do_I_prevent_commands_from_being_executed_in_parallel.3F,
+# https://bitbucket.org/scons/scons/wiki/SConsMethods/SideEffect, ``SideEffect``
+# in http://scons.org/doc/2.5.1/HTML/scons-man.html. */
+#
+# Note that the raw ``be['LINKERSCRIPT']`` string contains un-expanded variables, which makes scons unhappy.
+# For example, providing ``bootloader/pic24_dspic33_bootloader.X/lkr/p${MCU}.gld.00`` as a SideEffect the
+# produces errors like ``Internal Error: no cycle found for node build\esos_microstick2_33EP128GP502\chap14\app_ds1722.elf
+# (<SCons.Node.FS.File object at 0x04A2BC60>) in state pending``. So, produce a full, valid file name using subst.
+
   linker_temp_file = '/' + env.subst(os.path.basename(env['LINKERSCRIPT'])) + '.00'
   env.SideEffect(linker_temp_file, program)
 #
@@ -177,70 +188,19 @@ Help("""Additional targets:
   zipit: Build an archive for distributing end-user library contents.
   bootloader: Build the bootloader binaries only.""")
 
-# A DEBUG STATEMENT to see what the scons build envrionment (env) has defined.
-#print(env.Dump())
-#
-#
-# Definition of targets
-# =====================
-# First, set up for defining targets.
-#
-# Inform SCons about the dependencies in the template-based files.
-SConscript('templates/SConscript.py', 'env')
-
-# Create a target which zips up library files. Only build it if explicitly requested on the command line.
-if 'zipit' in COMMAND_LINE_TARGETS:
-    zip_file = 'build/pic24_code_examples.zip'
-    hg_dir = 'build/pic24lib_all'
-    env.Command(zip_file, '', [
-      # Clone the repo to create a clean distribution.
-      Delete(hg_dir, must_exist = 0),
-      'hg clone . ' + hg_dir,
-      # Copy over hex files from the build.
-      Copy(hg_dir + '/hex', 'hex'),
-      # Perform zip in clean clone.
-      'scons -C ' + hg_dir + ' -f SCons_zipit.py',
-    ])
-    env.Alias('zipit', zip_file)
-    # Only build this if it's explicitly requested. Since the dependencies of ``zip_fil`` are wrong, force a build using AlwaysBuild.
-    env.AlwaysBuild(zip_file)
-
-# Library builds
-# ==============
-# Call :doc:`SCons_build.py` with a specific buildTargets value. It create a variant build
-# named ``hardware_platform _ MCU _ clock``.
-def buildTargetsSConscript(
-  # A list of library targets to build, as defined in :doc:`SCons_build.py`.
-  buildTargets,
-  # The Environment to use for building. Use ``env.Clone(MCU='blah', CPPDEFINES='blah'``
-  # to choose a MCU, clock, and hardware platform as desired.
-  env,
-  # A string giving the name of the hardware platform.
-  hardware_platform,
-  # The same of the clock chosen, or of some special build option (such as
-  # nofloat).
-  extra_defines = ''):
-  # Build a variant directory name, based on the hardware platform, MCU, and extra defines (if any)
-  vdir = 'build/' + '_'.join([hardware_platform, env['MCU']])
-  if extra_defines:
-    vdir += '_' + extra_defines
-  SConscript('SCons_build.py', exports = 'buildTargets env bin2hex linker_side_effect',
-    variant_dir = vdir)
-
-# Build some selected chapter applications for the CAN2 rev.F14 board used in ECE4723 Embedded Systems
-buildTargetsSConscript(['BUILD_DIR'],
-  env.Clone(MCU='33EP512GP806', CPPDEFINES='HARDWARE_PLATFORM=EMBEDDED_F14'), 'embeddedF14')
 
 # ESOS builds
 # ===========
 def buildTargetsEsos(env, mcu, hardware_platform = 'DEFAULT_DESIGN', hardware_alias = 'default'):
     # Create an environment for building ESOS.
     env = env.Clone(MCU = mcu)
-    env.Append(CPPDEFINES = ['NUM_UART_MODS=1', 'BUILT_ON_ESOS', 'HARDWARE_PLATFORM=' + hardware_platform],
+    env.Append(CPPDEFINES = ['BUILT_ON_ESOS', 'HARDWARE_PLATFORM=' + hardware_platform],
                CPPPATH = ['esos/include', 'esos/include/pic24'])
 
     # Now, invoke a variant build using this environment.
-    SConscript('SCons_esos.py', exports = 'env bin2hex linker_side_effect',
-      variant_dir = 'build/esos_' + hardware_alias + '_' + mcu)
+    SConscript('SCons_Includes.py', exports = 'env bin2hex linker_side_effect',
+      # variant_dir = 'build/esos_' + hardware_alias + '_' + mcu)
+      variant_dir = 'build/')
+
 
 buildTargetsEsos(env, mcu='33EP512GP806', hardware_platform='EMBEDDED_F14', hardware_alias='embeddedF14')

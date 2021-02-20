@@ -1,5 +1,0 @@
-build/
-.sconsign.dblite
-.vscode/
-templates/**/*.pyc
-__pycache__
