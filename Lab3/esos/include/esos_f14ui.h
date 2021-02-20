@@ -24,9 +24,7 @@ typedef struct {
     BOOL b_SW3DoublePressed;
     uint16_t u16_SW3DoublePressedPeriod;
     
-    //BOOL b_RPGAHigh;
     BOOL b_RPGALast; // Last signal received from RPGA (0 or 1)
-    //BOOL b_RPGBHigh;
     BOOL b_RPGBLast; // Last signal received from RPGB (0 or 1)
     BOOL b_RPGMoving; // Is the RPG moving?
     BOOL b_RPGMoving_slow; // Is the RPG moving slowly?
