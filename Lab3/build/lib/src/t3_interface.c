@@ -6,7 +6,7 @@
 
 //TODO: just need to replace the getters/setters in this file with what we end up going with in our esos_f14ui files
 
-
+//_st_esos_uiF14Data_t _st_esos_uiF14Data;
 
 enum STATE {
 	BASE,
@@ -103,9 +103,7 @@ ESOS_USER_TASK(interface)
 		//SW1
 		else if (MENU_STATE == S_SW1) {
 			
-			
-			uint16_t u16_sw1_period_val;
-			u16_sw1_period_val = esos_uiF14_getSW1DoublePressedPeriod();
+			static uint16_t u16_sw1_period_val = 500; // This variable has to be hardcoded unfortunately
 			
 			// Print menu options
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
@@ -122,13 +120,14 @@ ESOS_USER_TASK(interface)
 			ESOS_TASK_WAIT_ON_GET_UINT8(u8_input);
 			ESOS_TASK_SIGNAL_AVAILABLE_IN_COMM();
 
+
 			// Set next state based on selection
 			switch (u8_input) {
 			case '1':
-				esos_uiF14_setSW1DoublePressedPeriod(u16_sw1_period_val + u16_sw1_period_val/10);
+				esos_uiF14_setSW1DoublePressedPeriod((u16_sw1_period_val += u16_sw1_period_val/10));
 				break;
 			case '2':
-				esos_uiF14_setSW1DoublePressedPeriod(u16_sw1_period_val - u16_sw1_period_val/11);
+				esos_uiF14_setSW1DoublePressedPeriod((u16_sw1_period_val -= u16_sw1_period_val/11));
 				break;
 			case '3':
 				MENU_STATE = BASE;
@@ -137,13 +136,13 @@ ESOS_USER_TASK(interface)
 				MENU_STATE = BASE;
 				break;
 			}
+
 		}
 		
 		//SW2
 		else if (MENU_STATE == S_SW2) {
 			
-			uint16_t u16_sw2_period_val;
-			u16_sw2_period_val = esos_uiF14_getSW2DoublePressedPeriod();
+			static uint16_t u16_sw2_period_val = 500;
 			
 			// Print menu options
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
@@ -163,10 +162,10 @@ ESOS_USER_TASK(interface)
 			// Set next state based on selection
 			switch (u8_input) {
 			case '1':
-				esos_uiF14_setSW2DoublePressedPeriod(u16_sw2_period_val + u16_sw2_period_val/10);
+				esos_uiF14_setSW2DoublePressedPeriod(u16_sw2_period_val += u16_sw2_period_val/10);
 				break;
 			case '2':
-				esos_uiF14_setSW1DoublePressedPeriod(u16_sw2_period_val - u16_sw2_period_val/11);
+				esos_uiF14_setSW2DoublePressedPeriod(u16_sw2_period_val -= u16_sw2_period_val/11);
 				break;
 			case '3':
 				MENU_STATE = BASE;
@@ -180,8 +179,7 @@ ESOS_USER_TASK(interface)
 		//SW3
 		else if (MENU_STATE == S_SW3) {
 			
-			uint16_t u16_sw3_period_val;
-			u16_sw3_period_val = esos_uiF14_getSW3DoublePressedPeriod();
+			static uint16_t u16_sw3_period_val = 500;
 			
 			// Print menu options
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
@@ -201,10 +199,10 @@ ESOS_USER_TASK(interface)
 			// Set next state based on selection
 			switch (u8_input) {
 			case '1':
-				esos_uiF14_setSW3DoublePressedPeriod(u16_sw3_period_val + u16_sw3_period_val/10);
+				esos_uiF14_setSW3DoublePressedPeriod(u16_sw3_period_val += u16_sw3_period_val/10);
 				break;
 			case '2':
-				esos_uiF14_setSW3DoublePressedPeriod(u16_sw3_period_val - u16_sw3_period_val/11);
+				esos_uiF14_setSW3DoublePressedPeriod(u16_sw3_period_val -= u16_sw3_period_val/11);
 				break;
 			case '3':
 				MENU_STATE = BASE;
@@ -218,14 +216,13 @@ ESOS_USER_TASK(interface)
 		//RPG SLOW
 		else if (MENU_STATE == SLOW) {
 			
-			uint16_t i16_rpg_slow_val;
-			i16_rpg_slow_val = esos_uiF14_getRPGSlowThreshold();
+			static uint16_t u16_rpg_slow_val = 400;
 			
 			// Print menu options
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_SLOW_DIS);
-			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)i16_rpg_slow_val);
+			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)u16_rpg_slow_val);
 			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
 			
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
@@ -239,10 +236,10 @@ ESOS_USER_TASK(interface)
 			// Set next state based on selection
 			switch (u8_input) {
 			case '1':
-				esos_uiF14_setSW1DoublePressedPeriod(i16_rpg_slow_val + i16_rpg_slow_val/10);
+				esos_uiF14_setRPG_noVelocity(u16_rpg_slow_val += u16_rpg_slow_val/10);
 				break;
 			case '2':
-				esos_uiF14_setSW1DoublePressedPeriod(i16_rpg_slow_val - i16_rpg_slow_val/11);
+				esos_uiF14_setRPG_noVelocity(u16_rpg_slow_val -= u16_rpg_slow_val/11);
 				break;
 			case '3':
 				MENU_STATE = BASE;
@@ -256,14 +253,13 @@ ESOS_USER_TASK(interface)
 		//RPG MED
 		else if (MENU_STATE == MED) {
 			
-			uint16_t i16_rpg_med_val;
-			i16_rpg_med_val = esos_uiF14_getRPGMediumThreshold(); //WES: changed from slow to med. Typo?
+			static uint16_t u16_rpg_med_val = 150;
 			
 			// Print menu options
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_MED_DIS);
-			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)i16_rpg_med_val);
+			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)u16_rpg_med_val);
 			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
 			
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
@@ -277,10 +273,10 @@ ESOS_USER_TASK(interface)
 			// Set next state based on selection
 			switch (u8_input) {
 			case '1':
-				esos_uiF14_setSW1DoublePressedPeriod(i16_rpg_med_val + i16_rpg_med_val/10);
+				esos_uiF14_setRPG_medVelocity(u16_rpg_med_val += u16_rpg_med_val/10);
 				break;
 			case '2':
-				esos_uiF14_setSW1DoublePressedPeriod(i16_rpg_med_val - i16_rpg_med_val/11);
+				esos_uiF14_setRPG_medVelocity(u16_rpg_med_val -= u16_rpg_med_val/11);
 				break;
 			case '3':
 				MENU_STATE = BASE;
@@ -294,14 +290,13 @@ ESOS_USER_TASK(interface)
 		//RPG FAST
 		else if (MENU_STATE == FAST) {
 			
-			uint16_t i16_rpg_fast_val;
-			i16_rpg_fast_val = esos_uiF14_getRPGFastThreshold();
+			static uint16_t u16_rpg_fast_val = 15;
 			
 			// Print menu options
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_FAST_DIS);
-			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)i16_rpg_fast_val);
+			ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING((uint32_t)u16_rpg_fast_val);
 			ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
 			
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_CHANGE);
@@ -315,10 +310,10 @@ ESOS_USER_TASK(interface)
 			// Set next state based on selection
 			switch (u8_input) {
 			case '1':
-				esos_uiF14_setSW1DoublePressedPeriod(i16_rpg_fast_val + i16_rpg_fast_val/10);
+				esos_uiF14_setRPG_fastVelocity(u16_rpg_fast_val += u16_rpg_fast_val/10);
 				break;
 			case '2':
-				esos_uiF14_setSW1DoublePressedPeriod(i16_rpg_fast_val - i16_rpg_fast_val/11);
+				esos_uiF14_setRPG_fastVelocity(u16_rpg_fast_val -= u16_rpg_fast_val/11);
 				break;
 			case '3':
 				MENU_STATE = BASE;

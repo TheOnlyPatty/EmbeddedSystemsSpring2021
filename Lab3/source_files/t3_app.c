@@ -2,6 +2,7 @@
 #include "esos_pic24.h"
 #include "esos_f14ui.h"
 #include "t3_interface.h"
+#include <stdio.h>
 
 //strings for printing state changes
 
@@ -212,6 +213,24 @@ ESOS_USER_TASK(LED) {
     ESOS_TASK_END();
 }
 
+/*
+// For testing the interface's ability to raise and lower times
+ESOS_USER_TASK(test) {
+	ESOS_TASK_BEGIN();
+	while(TRUE) {
+		printf("\n\nSW1: %u\n", esos_uiF14_getSW1DoublePressedPeriod());
+		printf("\nSW2: %u\n", esos_uiF14_getSW2DoublePressedPeriod());
+		printf("\nSW3: %u\n", esos_uiF14_getSW3DoublePressedPeriod());
+		printf("\nRPG SLOW: %u\n", esos_uiF14_getRPGSlowThreshold());
+		printf("\nRPG MEDIUM: %u\n", esos_uiF14_getRPGMediumThreshold());
+		printf("\nRPG FAST:%u\n\n", esos_uiF14_getRPGFastThreshold());
+		ESOS_TASK_WAIT_TICKS(1000);
+	}
+	
+	ESOS_TASK_END();
+}
+*/
+
 void user_init(void) {
     config_esos_uiF14();
     config_ui_menu();
@@ -220,5 +239,6 @@ void user_init(void) {
 
     esos_RegisterTask(rpg);
     esos_RegisterTask(LED);
+	//esos_RegisterTask(test);
 
 }
