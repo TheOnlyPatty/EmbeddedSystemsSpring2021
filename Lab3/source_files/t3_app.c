@@ -17,7 +17,7 @@ static char str_SW1_DP[] = "SW1 Double Pressed\n";
 static char str_SW2_P[] = "SW2 Pressed\n";
 static char str_SW2_DP[] = "SW2 Double Pressed\n";
 static char str_SW3_P[] = "SW3 Pressed\n";
-static char str_SW3_DP[] = "SW3 Double Pressed\n";
+//static char str_SW3_DP[] = "SW3 Double Pressed\n";
 
 
 
@@ -137,19 +137,21 @@ ESOS_USER_TASK(LED) {
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW1_DP);
 			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
-            esos_uiF14_turnLED1Off();
-            ESOS_TASK_WAIT_TICKS(300);
-            esos_uiF14_turnLED1On();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1Off();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1On();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1Off();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1On();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1Off();
+			if (esos_uiF14_isSW3Pressed() == FALSE) {
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(300);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();	
+			}
         }
 		// Made another separate statement instead of including in the previous if as and or 
 		// due to the serial communication
@@ -157,37 +159,35 @@ ESOS_USER_TASK(LED) {
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW2_DP);
 			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
-            esos_uiF14_turnLED1Off();
-            ESOS_TASK_WAIT_TICKS(300);
-            esos_uiF14_turnLED1On();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1Off();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1On();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1Off();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1On();
-            ESOS_TASK_WAIT_TICKS(200);
-            esos_uiF14_turnLED1Off();
-        }
-        if ((esos_uiF14_isSW1Pressed() == TRUE) || (esos_uiF14_isSW2Pressed() == TRUE)) {
-            esos_uiF14_turnLED1On();
-			if (esos_uiF14_isSW1Pressed == TRUE) {
-				ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-				ESOS_TASK_WAIT_ON_SEND_STRING(str_SW1_P);
-				ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
-			}
-			else if (esos_uiF14_isSW2Pressed == TRUE) {
-				ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
-				ESOS_TASK_WAIT_ON_SEND_STRING(str_SW2_P);
-				ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
+			if (esos_uiF14_isSW3Pressed() == TRUE) {
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(300);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();	
 			}
         }
+
+		// LED control (SW3 stuff)
+        if ((esos_uiF14_isSW1Pressed() == TRUE) && (esos_uiF14_isSW3Pressed() == FALSE)) {
+            esos_uiF14_turnLED1On();
+        }
+		else if ((esos_uiF14_isSW2Pressed() == TRUE) && (esos_uiF14_isSW3Pressed() == TRUE)) {
+			esos_uiF14_turnLED1On();
+		}
         else if ((esos_uiF14_isSW1Released() == TRUE) && (esos_uiF14_isSW2Released() == TRUE)) {
             esos_uiF14_turnLED1Off();
         }
 
+		// Switch serial output
 		if (esos_uiF14_isSW1Pressed() == TRUE) {
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW1_P);
