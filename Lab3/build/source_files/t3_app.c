@@ -33,6 +33,8 @@ ESOS_USER_TASK(rpg) {
 	static uint16_t special_state = 0;
 	static uint16_t previous_special_state = 0;
 
+	ESOS_TASK_WAIT_TICKS(500); // Prevents an RPG moving message when the board first starts up
+
     while(TRUE) {
 		
         if (esos_uiF14_isRPGTurningFast() == TRUE) {
