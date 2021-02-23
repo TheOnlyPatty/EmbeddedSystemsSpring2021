@@ -73,8 +73,8 @@ inline BOOL esos_uiF14_isSW3Released (void) {
     return (!_st_esos_uiF14Data.b_SW3Pressed);
 }
 inline BOOL esos_uiF14_isSW3DoublePressed (void) {
-    BOOL temp = _st_esos_uiF14Data.b_SW2DoublePressed;
-    _st_esos_uiF14Data.b_SW2DoublePressed = FALSE;
+    BOOL temp = _st_esos_uiF14Data.b_SW3DoublePressed;
+    _st_esos_uiF14Data.b_SW3DoublePressed = FALSE;
     return temp;
 }
 inline void esos_uiF14_setSW3DoublePressedPeriod (uint16_t period) {
