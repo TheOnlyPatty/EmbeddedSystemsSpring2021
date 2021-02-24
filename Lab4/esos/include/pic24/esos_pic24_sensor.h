@@ -40,7 +40,7 @@
 
 #ifndef ESOS_PIC24_SENSOR_H
 #define ESOS_PIC24_SENSOR_H
-#define __ESOS_SYS_ADC_IS_BUSY ESOS_ADC_FLAG  // Used to tell if ADC is currently busy
+#define __ESOS_SYS_ADC_IS_BUSY ESOS_USER_FLAG_0  // Used to tell if ADC is currently busy
 
 /* I N C L U D E S **********************************************************/
 #include <esos_pic24.h>
