@@ -462,6 +462,8 @@ void config_esos_uiF14() {
     CONFIG_SW2_DEBOUNCE_AND_IC();
     CONFIG_SW3_DEBOUNCE_AND_IC();
     CONFIG_RPG();
+    CONFIG_POT();
+    CONFIG_THERM();
     
     esos_RegisterTask(__esos_uiF14_task);
     

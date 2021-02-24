@@ -35,7 +35,12 @@
 #define SW2 (!_RB12)
 #define SW3 (!_RC15)
 
-
+#define SW1_PRESSED (_RB13 == 0)
+#define SW1_RELEASED (_RB13 == 1)
+#define SW2_PRESSED (_RB12 == 0)
+#define SW2_RELEASED (_RB12 == 1)
+#define SW3_PRESSED (_RC15 == 0)
+#define SW3_RELEASED (_RC15 == 1)
 
 inline void CONFIG_SW1()
 {
@@ -43,20 +48,21 @@ inline void CONFIG_SW1()
 	ENABLE_RB13_PULLUP();
 	DELAY_US(1);
 }
-
 inline void CONFIG_SW2()
 {
 	CONFIG_RB12_AS_DIG_INPUT();
 	ENABLE_RB12_PULLUP();
 	DELAY_US(1);
 }
-
 inline void CONFIG_SW3()
 {
 	CONFIG_RC15_AS_DIG_INPUT();
 	ENABLE_RC15_PULLUP();
 	DELAY_US(1);
 }
+
+#define RPGA (_RB8)
+#define RPGB (_RB9)
 
 inline void CONFIG_RPG()  {
   CONFIG_RB8_AS_DIG_INPUT();
@@ -66,16 +72,11 @@ inline void CONFIG_RPG()  {
   DELAY_US(1);
 }
 
-#define RPGA (_RB8)
-#define RPGB (_RB9)
+#define POT (RB2_AN)
+#define CONFIG_POT() CONFIG_RB2_AS_ANALOG()
 
-#define SW1_PRESSED (_RB13 == 0)
-#define SW1_RELEASED (_RB13 == 1)
+#define THERM (RB3_AN)
+#define CONFIG_THERM() CONFIG_RB3_AS_ANALOG()
 
-#define SW2_PRESSED (_RB12 == 0)
-#define SW2_RELEASED (_RB12 == 1)
-
-#define SW3_PRESSED (_RC15 == 0)
-#define SW3_RELEASED (_RC15 == 1)
 
 #endif // closes the #ifndef block
