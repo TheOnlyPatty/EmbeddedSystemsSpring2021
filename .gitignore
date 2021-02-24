@@ -1,7 +1,6 @@
 
 wes_cmd.txt
-Lab3/.sconsign.dblite
-Lab3_merge/.DS_Store
+*.DS_Store
 *.o
 *.elf
 *.dblite
