@@ -18,7 +18,7 @@ static char str_SW1_DP[] = "SW1 Double Pressed\n";
 static char str_SW2_P[] = "SW2 Pressed\n";
 static char str_SW2_DP[] = "SW2 Double Pressed\n";
 static char str_SW3_P[] = "SW3 Pressed\n";
-//static char str_SW3_DP[] = "SW3 Double Pressed\n";
+static char str_SW3_DP[] = "SW3 Double Pressed\n";
 
 
 
@@ -32,6 +32,8 @@ ESOS_USER_TASK(rpg) {
 	// Special states relating to no RPG movement
 	static uint16_t special_state = 0;
 	static uint16_t previous_special_state = 0;
+
+	ESOS_TASK_WAIT_TICKS(500); // Prevents an RPG moving message when the board first starts up
 
     while(TRUE) {
 		
@@ -159,6 +161,26 @@ ESOS_USER_TASK(LED) {
 		if (esos_uiF14_isSW2DoublePressed() == TRUE) {
 			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW2_DP);
+			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
+			if (esos_uiF14_isSW3Pressed() == TRUE) {
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(300);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1On();
+				ESOS_TASK_WAIT_TICKS(200);
+				esos_uiF14_turnLED1Off();	
+			}
+        }
+		if (esos_uiF14_isSW3DoublePressed() == TRUE) {
+			ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
+			ESOS_TASK_WAIT_ON_SEND_STRING(str_SW3_DP);
 			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 			if (esos_uiF14_isSW3Pressed() == TRUE) {
 				esos_uiF14_turnLED1Off();
