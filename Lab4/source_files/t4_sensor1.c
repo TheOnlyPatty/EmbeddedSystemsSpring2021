@@ -2,6 +2,8 @@
 #include "esos_pic24.h"
 #include "esos_f14ui.h"
 //#include "t3_interface.h"
+#include "esos_sensor.h"
+#include "revF14.h"
 #include <stdio.h>
 
 static char str_INSTRUCTIONS1[] = "Press SW1 to sample the potentiometer once.\nPress SW2 to begin sampling the potentiometer once per second.\n";
@@ -10,10 +12,10 @@ static char str_ONE_SHOT_POT_PRE[] = "Potentiometer reading: ";
 
 static enum STATE {
     INSTRUCT,
+    WAIT,
     ONE_SHOT,
     CONTINUOUS,
 } MENU_STATE;
-//static enum STATE MENU_STATE;
 
 ESOS_USER_TASK(StateChange) {
     static BOOL SW1_STATE, SW2_STATE;
@@ -26,13 +28,13 @@ ESOS_USER_TASK(StateChange) {
                 else MENU_STATE = ONE_SHOT;
             }
         }
-        if (SW2_STATE != esos_uiF14_isSW2Pressed()) {
+        if (SW2_STATE != esos_uiF14_isSW2Pressed()) { //Require a release before changing state again
             SW2_STATE = esos_uiF14_isSW2Pressed();
             if (SW2_STATE) {
                 if (MENU_STATE == CONTINUOUS)
-                    MENU_STATE = INSTRUCT; // if continuous is running, stop it.
+                    MENU_STATE = INSTRUCT;
                 else
-                    MENU_STATE = CONTINUOUS; // otherwise start it.
+                    MENU_STATE = CONTINUOUS;
             }
         }
         ESOS_TASK_YIELD();
@@ -49,6 +51,10 @@ ESOS_USER_TASK(SerialOutput) {
             ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
             ESOS_TASK_WAIT_ON_SEND_STRING(str_INSTRUCTIONS1);
             ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
+            MENU_STATE = WAIT;
+        }
+        else if(MENU_STATE == WAIT) {
+            
         }
         else if(MENU_STATE == ONE_SHOT) {
             ESOS_TASK_WAIT_ON_AVAILABLE_SENSOR(POT_CHANNEL, ESOS_SENSOR_VREF_3V3);
