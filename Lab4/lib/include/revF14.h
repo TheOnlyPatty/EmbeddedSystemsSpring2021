@@ -88,7 +88,7 @@ inline void CONFIG_ADC() {
     AD1CON1bits.SAMP    = 0b0;    //The ADC sample/hold amplifier is holding
     AD1CON1bits.DONE    = 0b0;    //Analog-to-digital conversion is not done or has not started
 //    AD1CON1bits.ADDMABM = 0b1;  //DMA Buffers written in order of conversion
-//    AD1CON1bits.AD12B = 0b1;    //Enable 12 bit mode
+    AD1CON1bits.AD12B = 0b1;    //Enable 12 bit mode
 //    AD1CON1bits.SSRCG = 0b0;    //Sample clock source group
     
     AD1CON2bits.VCFG    = 0b001;  //Set ADC VR+ to VREF+ pin and VR- to AVSS pin

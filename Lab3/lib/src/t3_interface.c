@@ -2,10 +2,6 @@
 #include "esos.h"
 #include "esos_pic24.h"
 
-//NOT FINISHED
-
-//TODO: just need to replace the getters/setters in this file with what we end up going with in our esos_f14ui files
-
 //_st_esos_uiF14Data_t _st_esos_uiF14Data;
 
 enum STATE {

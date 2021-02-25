@@ -30,8 +30,11 @@
 #include "esos_sensor.h"
 #include <esos.h>
 #include <stdlib.h>
+#include "esos_pic24_sensor.h"
 
 #define MAX16BIT 0xFF
+#define POT_CHANNEL ESOS_SENSOR_CH02
+#define THERM_CHANNEL ESOS_SENSOR_CH03
 
 /**
 * Waits until a sensor is available.
