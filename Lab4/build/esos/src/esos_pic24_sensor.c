@@ -22,19 +22,19 @@ void esos_sensor_config_hw (esos_sensor_ch_t e_senCh, esos_sensor_vref_t e_senVR
     AD1CON2bits.SMPI    = 0b0000; //Interrupts at the completion of conversion for each sample/convert sequence
     AD1CON2bits.BUFM    = 0b0;    //Buffer configured as one 16-word buffer ADC1BUF(15...0.)
     AD1CON2bits.ALTS    = 0b0;    //Always use MUX A input multiplexer settings
-    AD1CON2bits.CHPS    = 0b00; //Channel select bits
+    AD1CON2bits.CHPS    = 0b00;   //Channel select bits
     
     AD1CON3bits.ADRC    = 0b1;    //ADC internal RC clock
-    AD1CON3bits.SAMC    = 0b11111;//Auto-sample Time bits: 31 TAD */
+    AD1CON3bits.SAMC    = 0b11111;//Auto-sample Time bits: 31 TAD
     AD1CON4bits.ADDMAEN = 0b0;
 
-    AD1CHS0bits.CH0SA = e_senCh; //Set CH0+ input AN[e_senCh]
-    AD1CHS0bits.CH0NA = 0; //Set CHO- input to VREFL (AVss)
-    AD1CHS123 = 0; //Disable CH's 1,2,&3
-    AD1CSSH = 0x0000; //No inputs are scanned
-    AD1CSSL = 0x0000; //Set input scan select register low
+    AD1CHS0bits.CH0SA = e_senCh;  //Set CH0+ input AN[e_senCh]
+    AD1CHS0bits.CH0NA = 0;        //Set CHO- input to VREFL (AVss)
+    AD1CHS123 = 0;                //Disable CH's 1,2,&3
+    AD1CSSH = 0x0000;             //No inputs are scanned
+    AD1CSSL = 0x0000;             //Set input scan select register low
 //    IFS1CLR = 2; //Clear ADC conversion interrupt
-    AD1CON1bits.ADON = 1; //Turn ADC on
+    AD1CON1bits.ADON = 1;         //Turn ADC on
 }
 
 //Determine if the sensor is currently converting

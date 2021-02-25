@@ -4,7 +4,7 @@
 #include <esos_sensor.h>
 #include "revF14.h"
 
-#define ESOS_SENSOR_IS_CONVERTING ESOS_USER_FLAG_7
+#define ESOS_SENSOR_IS_CONVERTING ESOS_USER_FLAG_0
 
 void esos_sensor_config_hw (esos_sensor_ch_t, esos_sensor_vref_t);
 void esos_sensor_initiate_hw (void);
