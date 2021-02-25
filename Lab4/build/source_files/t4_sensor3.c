@@ -194,22 +194,22 @@ ESOS_USER_TASK(SerialOutput) {
 			case '4':
 				switch (u8_option2) {
                     case '1':
-                        ESOS_SENSOR_MAX2;
+                        processing_mode = ESOS_SENSOR_MAX2;
                         break;
                     case '2':
-                        ESOS_SENSOR_MAX4;
+                        processing_mode = ESOS_SENSOR_MAX4;
                         break;
                     case '3':
-                        ESOS_SENSOR_MAX8;
+                        processing_mode = ESOS_SENSOR_MAX8;
                         break;
                     case '4':
-                        ESOS_SENSOR_MAX16;
+                        processing_mode = ESOS_SENSOR_MAX16;
                         break;
                     case '5':
-                        ESOS_SENSOR_MAX32;
+                        processing_mode = ESOS_SENSOR_MAX32;
                         break;
                     case '6':
-                        ESOS_SENSOR_MAX64;
+                        processing_mode = ESOS_SENSOR_MAX64;
                         break;
                 }   
 				break;
@@ -217,22 +217,22 @@ ESOS_USER_TASK(SerialOutput) {
 			case '5':
 				switch (u8_option2) {
                     case '1':
-                        ESOS_SENSOR_MEDIAN2;
+                        processing_mode = ESOS_SENSOR_MEDIAN2;
                         break;
                     case '2':
-                        ESOS_SENSOR_MEDIAN4;
+                        processing_mode = ESOS_SENSOR_MEDIAN4;
                         break;
                     case '3':
-                        ESOS_SENSOR_MEDIAN8;
+                        processing_mode = ESOS_SENSOR_MEDIAN8;
                         break;
                     case '4':
-                        ESOS_SENSOR_MEDIAN16;
+                        processing_mode = ESOS_SENSOR_MEDIAN16;
                         break;
                     case '5':
-                        ESOS_SENSOR_MEDIAN32;
+                        processing_mode = ESOS_SENSOR_MEDIAN32;
                         break;
                     case '6':
-                        ESOS_SENSOR_MEDIAN64;
+                        processing_mode = ESOS_SENSOR_MEDIAN64;
                         break;
                 }   
 				break;
