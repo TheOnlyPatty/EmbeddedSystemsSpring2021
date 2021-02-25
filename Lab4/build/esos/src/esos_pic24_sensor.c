@@ -63,3 +63,39 @@ void esos_sensor_release_hw (void) {
     esos_ClearUserFlag(ESOS_SENSOR_IS_CONVERTING);
     AD1CON1bits.ADON = 0; // turn off the adc
 }
+
+int uint32_to_str(uint32_t u32_val, char *str, uint32_t len)
+{
+    // Catches out any time these two values are set to 0
+    if (len == 0 || u32_val == 0)
+        return -1;
+
+    //printf("\nTEMP_INT: %lu\n", u32_val);
+    uint32_t digit;
+    uint16_t i = 0;
+    // Stores all of the digits from u32_val into the string BACKWARDS
+    while (u32_val && (i < (len - 1))) {
+        
+        digit = u32_val % 10; // Split off the last digit of the number
+        str[i] = '0' + digit; // Store the digit in the string
+        u32_val /= 10; // Divide off the digit that was just stored in the string
+        i++; // Increment
+        
+    }
+    str[i] = '\0'; // End of string
+    
+    // String reversal
+    // The string reversal is really weird because we're dealing with char *
+    char *temp = str;
+    char *also_temp = temp;
+    while (also_temp && *also_temp)
+        ++also_temp;
+    for (--also_temp; temp < also_temp; ++temp, --also_temp) {
+        // Lots of XORs
+        *temp = *temp ^ *also_temp; 
+        *also_temp = *temp ^ *also_temp; 
+        *temp = *temp ^ *also_temp;
+    }
+
+   return 0;
+}
