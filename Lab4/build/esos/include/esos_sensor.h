@@ -46,7 +46,9 @@
 
 /* E N U M S ****************************************************************/
 
+
 //Sensor channel selection
+
 typedef enum {
 	ESOS_SENSOR_CH00 = 0x00,
 	ESOS_SENSOR_CH01 = 0x01,
@@ -67,7 +69,9 @@ typedef enum {
 } esos_sensor_ch_t;
 
 
+
 // Voltage reference selection
+
 typedef enum {
 	ESOS_SENSOR_VREF_1V0 = 0x00,
 	ESOS_SENSOR_VREF_1V024 = 0x01,
@@ -81,28 +85,37 @@ typedef enum {
 } esos_sensor_vref_t;
 
 
-// Selection for sensor procesing
+/**
+* enumeration to select sensor processing
+**/
 typedef enum {
 	ESOS_SENSOR_ONE_SHOT = 0x00,
-	ESOS_SENSOR_AVG2 = 0x01,  
+	ESOS_SENSOR_AVG2 = 0x01,      // arithmetic average
+
 	ESOS_SENSOR_AVG4 = 0x02,
 	ESOS_SENSOR_AVG8 = 0x03,
 	ESOS_SENSOR_AVG16 = 0x04,
 	ESOS_SENSOR_AVG32 = 0x05,
 	ESOS_SENSOR_AVG64 = 0x06,
-	ESOS_SENSOR_MIN2 = 0x21,  
+
+	ESOS_SENSOR_MIN2 = 0x21,      // minimum
+
 	ESOS_SENSOR_MIN4 = 0x22,
 	ESOS_SENSOR_MIN8 = 0x23,
 	ESOS_SENSOR_MIN16 = 0x24,
 	ESOS_SENSOR_MIN32 = 0x25,
 	ESOS_SENSOR_MIN64 = 0x26, 
-	ESOS_SENSOR_MAX2 = 0x41, 
+
+	ESOS_SENSOR_MAX2 = 0x41,      // maximum
+
 	ESOS_SENSOR_MAX4 = 0x42,
 	ESOS_SENSOR_MAX8 = 0x43,
 	ESOS_SENSOR_MAX16 = 0x44,
 	ESOS_SENSOR_MAX32 = 0x45,
 	ESOS_SENSOR_MAX64 = 0x46,
-	ESOS_SENSOR_MEDIAN2 = 0x81,
+
+	ESOS_SENSOR_MEDIAN2 = 0x81,   // median
+
 	ESOS_SENSOR_MEDIAN4 = 0x82,
 	ESOS_SENSOR_MEDIAN8 = 0x83,
 	ESOS_SENSOR_MEDIAN16 = 0x84,
@@ -110,7 +123,11 @@ typedef enum {
 	ESOS_SENSOR_MEDIAN64 = 0x86,
 } esos_sensor_process_t;
 
-// Return value format
+
+/**
+* enumeration to select sensor return value format
+**/
+
 typedef enum {
 	ESOS_SENSOR_FORMAT_BITS = 0x00,    // Return the ADC "raw" bitset
 	ESOS_SENSOR_FORMAT_VOLTAGE = 0x80, // Return the ADC value as an integer representating the number of 0.1mV

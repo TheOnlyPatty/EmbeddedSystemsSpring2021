@@ -8,8 +8,10 @@
 
 static char str_INSTRUCTIONS1[] = "Press SW1 to sample the potentiometer once.\nPress SW2 to begin sampling the potentiometer once per second.\n";
 static char str_INSTRUCTIONS2[] = "Press SW1 or SW2 to quit sampling.\n";
+
 static char str_ONE_SHOT_POT_PRE1[] = "Previous potentiometer reading: ";
 static char str_ONE_SHOT_POT_PRE2[] = "Current potentiometer reading: ";
+
 
 static enum STATE {
     INSTRUCT,
@@ -58,6 +60,7 @@ ESOS_USER_TASK(SerialOutput) {
             
         }
         else if(MENU_STATE == ONE_SHOT) {
+
             uint8_t temp = 0;
             while (temp < 2){
                 ESOS_TASK_WAIT_ON_AVAILABLE_SENSOR(POT_CHANNEL, ESOS_SENSOR_VREF_3V3);
@@ -78,6 +81,7 @@ ESOS_USER_TASK(SerialOutput) {
                 ESOS_SENSOR_CLOSE();
                 temp++;
             }
+
             MENU_STATE = INSTRUCT;
         }
         else if(MENU_STATE == CONTINUOUS) {
@@ -88,7 +92,9 @@ ESOS_USER_TASK(SerialOutput) {
             while(MENU_STATE == CONTINUOUS) {
                 ESOS_TASK_WAIT_SENSOR_READ(u16_data, ESOS_SENSOR_ONE_SHOT, ESOS_SENSOR_FORMAT_BITS);
                 ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
+
                 ESOS_TASK_WAIT_ON_SEND_STRING(str_ONE_SHOT_POT_PRE1);
+
                 ESOS_TASK_WAIT_ON_SEND_UINT16_AS_HEX_STRING(u16_data);
                 ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
                 ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
@@ -105,7 +111,9 @@ ESOS_USER_TASK(SerialOutput) {
 void user_init(void) {
     config_esos_uiF14();
 //    config_ui_menu();
+
     esos_uiF14_flashLED3(250); //250 ms flash on LED3. (Heartbeat)
+
     MENU_STATE = INSTRUCT;
     esos_RegisterTask(SerialOutput);
     esos_RegisterTask(StateChange);

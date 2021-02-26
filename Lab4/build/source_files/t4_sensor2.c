@@ -1,3 +1,4 @@
+
 #include "esos.h"
 #include "esos_pic24.h"
 #include "esos_f14ui.h"
@@ -207,5 +208,6 @@ void user_init(void) {
     MENU_STATE = INSTRUCT;
     esos_RegisterTask(StateChange);
     esos_RegisterTask(SerialOutput);
+
 
 }

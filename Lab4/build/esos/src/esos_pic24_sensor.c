@@ -64,6 +64,7 @@ void esos_sensor_release_hw (void) {
     AD1CON1bits.ADON = 0; // turn off the adc
 }
 
+
 int uint32_to_str(uint32_t u32_val, char *str, uint32_t len)
 {
     // Catches out any time these two values are set to 0
@@ -99,3 +100,4 @@ int uint32_to_str(uint32_t u32_val, char *str, uint32_t len)
 
    return 0;
 }
+

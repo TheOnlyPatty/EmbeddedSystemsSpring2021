@@ -13,4 +13,5 @@ void esos_sensor_release_hw (void);
 BOOL esos_sensor_is_converting_hw (void);
 int uint32_to_str(uint32_t u32_val, char *str, uint32_t len);
 
+
 #endif
