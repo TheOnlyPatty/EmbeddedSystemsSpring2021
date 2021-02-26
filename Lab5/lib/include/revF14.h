@@ -75,17 +75,9 @@
 #define THERM_CHANNEL ESOS_SENSOR_CH03
 #define CONFIG_THERM() CONFIG_RB3_AS_ANALOG()
 
-#define LCD_E (_LATD10)
+#define LCD_E (_LATD10) //LCD function pins
 #define LCD_RW (_LATD11)
 #define LCD_RS (_LATC12)
-#define LCD_DB0 (_LATE0)
-#define LCD_DB1 (_LATE1)
-#define LCD_DB2 (_LATE2)
-#define LCD_DB3 (_LATE3)
-#define LCD_DB4 (_LATE4)
-#define LCD_DB5 (_LATE5)
-#define LCD_DB6 (_LATE6)
-#define LCD_DB7 (_LATE7)
 
 #define ESOS_LCD_IN_OUTPUT_MODE ESOS_USER_FLAG_8
 
@@ -93,6 +85,15 @@
     CONFIG_RD10_AS_DIG_OUTPUT(); /*Enable*/ \
     CONFIG_RD11_AS_DIG_OUTPUT(); /*Read/Write*/ \
     CONFIG_RC12_AS_DIG_OUTPUT() /*Register Select*/
+
+#define LCD_DB0 (_LATE0) //LCD data pins
+#define LCD_DB1 (_LATE1)
+#define LCD_DB2 (_LATE2)
+#define LCD_DB3 (_LATE3)
+#define LCD_DB4 (_LATE4)
+#define LCD_DB5 (_LATE5)
+#define LCD_DB6 (_LATE6)
+#define LCD_DB7 (_LATE7)
 
 #define LCD44780_CONFIG_OUTPUT() \
     CONFIG_RE0_AS_DIG_OUTPUT(); /*DB0 (output)*/ \
