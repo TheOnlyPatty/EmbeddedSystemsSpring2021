@@ -43,7 +43,7 @@ for sourceFile in Glob('source_files/*.c', True, True, True):
         'lib/src/pic24_util.c',
         'lib/src/pic24_serial.c',
         'lib/src/pic24_uart.c',
-        # 'lib/src/t3_interface.c',
+        'lib/src/t3_interface.c',
         'esos/src/esos.c',
         'esos/src/esos_comm.c',
         'esos/src/esos_cb.c',
