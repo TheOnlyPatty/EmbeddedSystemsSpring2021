@@ -86,26 +86,26 @@ ESOS_USER_TASK ( ecan_receiver ) {
     uint8_t buf[8] = {0};
     uint8_t u8_len;
     uint16_t u16_can_id;
-    
+
     ESOS_TASK_BEGIN();
-    
+
     esos_ecan_canfactory_subscribe( __pstSelf, 0x7a0, 0xffff, MASKCONTROL_FIELD_NONZERO );
-    
+
     while ( TRUE ) {
         static MAILMESSAGE msg;
-        
+
         ESOS_TASK_WAIT_FOR_MAIL();
         ESOS_TASK_GET_NEXT_MESSAGE( &msg );
         u16_can_id = msg.au16_Contents[0];
         u8_len = ESOS_GET_PMSG_DATA_LENGTH( ( &msg - sizeof( uint16_t ) ) );
         memcpy( buf, &msg.au8_Contents[ sizeof( uint16_t ) ], u8_len );
-        
+
         LED1 = buf[0];
         LED2 = buf[1];
-        
+
         ESOS_TASK_YIELD();
     }
-    
+
     ESOS_TASK_END();
 }
 
@@ -121,7 +121,7 @@ void user_init ( void ) {
     CONFIG_LED3();
     CONFIG_SW1();
     CONFIG_SW2();
-    
+
     esos_RegisterTask( heartbeat_LED );
     esos_RegisterTask( CANFactory );
     esos_RegisterTask( ecan_receiver );

@@ -31,10 +31,10 @@
  * \addtogroup ESOS_Task_LCD_Service
  * @{
  */
- 
+
 /*** I N C L U D E S *************************************************/
 #include "esos_pic24_lcd.h"
-
+//something
 /*** T H E   C O D E *************************************************/
 void __esos_lcd44780_pic24_config ( void )
 {
@@ -47,23 +47,23 @@ void __esos_lcd44780_pic24_config ( void )
 void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) {
 	// write the hardware-specific code to take the u8_data passed in
 	// and place it on the appropriate data pins
-	
+
 }
 
 uint8_t __esos_lcd44780_pic24_getDataPins( void ) {
 	// write the hardware-specific code to read the appropriate data pins
 	// and create the uint8 data to return to the caller
-	
+
 }
 
 void __esos_lcd44780_pic24_configDataPinsAsInput( void ) {
 	// write the hardware-specific code to set the LCD character module
 	// data pins to be "inputs" to prepare for a read of the LCD module
-	
+
 }
 
 void __esos_lcd44780_pic24_configDataPinsAsOutput( void ) {
 	// write the hardware-specific code to set the LCD character module
 	// data pins to be "outputs" to prepare for a write to the LCD module
-	
+
 }
