@@ -40,8 +40,7 @@ void __esos_lcd44780_pic24_config ( void )
 {
     // Set up the hardware aspects of the pic24 interface of the LCD module service
     //    direction, thresholds, etc beyond what is already done in esos_lcd44780_config()
-
-
+    
 }
 
 void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) {
@@ -56,14 +55,16 @@ uint8_t __esos_lcd44780_pic24_getDataPins( void ) {
 	
 }
 
-void __esos_lcd44780_pic24_configDataPinsAsInput( void ) {
-	// write the hardware-specific code to set the LCD character module
-	// data pins to be "inputs" to prepare for a read of the LCD module
-	
+void __esos_lcd44780_pic24_configDataPinsAsInput( void ) { //Configure data pins as inputs and clear esos user flag
+    if(esos_IsUserFlagSet(ESOS_LCD_IN_OUTPUT_MODE)) {
+        LCD44780_CONFIG_INPUT();
+        esos_ClearUserFlag(ESOS_LCD_IN_OUTPUT_MODE);
+    }
 }
 
-void __esos_lcd44780_pic24_configDataPinsAsOutput( void ) {
-	// write the hardware-specific code to set the LCD character module
-	// data pins to be "outputs" to prepare for a write to the LCD module
-	
+void __esos_lcd44780_pic24_configDataPinsAsOutput( void ) { //Configure data pins as outputs and set esos user flag
+    if(!esos_IsUserFlagSet(ESOS_LCD_IN_OUTPUT_MODE)) {
+        LCD44780_CONFIG_OUTPUT();
+        esos_SetUserFlag(ESOS_LCD_IN_OUTPUT_MODE);
+    }
 }

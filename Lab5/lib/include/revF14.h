@@ -45,17 +45,17 @@
 #define CONFIG_SW1() \
 	CONFIG_RB13_AS_DIG_INPUT(); \
 	ENABLE_RB13_PULLUP(); \
-	DELAY_US(1) \
+	DELAY_US(1)
 
 #define CONFIG_SW2() \
 	CONFIG_RB12_AS_DIG_INPUT(); \
 	ENABLE_RB12_PULLUP(); \
-	DELAY_US(1) \
+	DELAY_US(1)
 
 #define CONFIG_SW3() \
 	CONFIG_RC15_AS_DIG_INPUT(); \
 	ENABLE_RC15_PULLUP(); \
-	DELAY_US(1) \
+	DELAY_US(1)
 
 #define RPGA (_RB8)
 #define RPGB (_RB9)
@@ -65,7 +65,7 @@
     CONFIG_RB9_AS_DIG_INPUT(); \
     ENABLE_RB8_PULLUP(); \
     ENABLE_RB9_PULLUP(); \
-    DELAY_US(1) \
+    DELAY_US(1)
 
 #define POT (RB2_AN)
 #define POT_CHANNEL ESOS_SENSOR_CH02
@@ -75,32 +75,61 @@
 #define THERM_CHANNEL ESOS_SENSOR_CH03
 #define CONFIG_THERM() CONFIG_RB3_AS_ANALOG()
 
-//inline void CONFIG_ADC() {
-//    AD1CON1bits.ADON    = 0b0;    //Turn ADC off
-//    AD1CON1bits.ADSIDL  = 0b0;    //Continue module operation in Idle mode
-//    AD1CON1bits.FORM    = 0b0;    //Integer 16-bit (DOUT = 0000 0000 0000 0000 0000 00dd dddd dddd)
-//    AD1CON1bits.SSRC    = 0b111;  //Internal counter ends sampling and starts conversion (auto convert)
-////    AD1CON1bits.CLRASAM = 0b111;  //Normal operation, buffer contents will be overwritten by the next conversion sequence
-//    AD1CON1bits.ASAM    = 0b0;    //Sampling begins when SAMP bit is set (change this to auto-sample)
-//    AD1CON1bits.SAMP    = 0b0;    //The ADC sample/hold amplifier is holding
-//    AD1CON1bits.DONE    = 0b0;    //Analog-to-digital conversion is not done or has not started
-////    AD1CON1bits.ADDMABM = 0b1;  //DMA Buffers written in order of conversion
-//    AD1CON1bits.AD12B = 0b1;    //Enable 12 bit mode
-////    AD1CON1bits.SSRCG = 0b0;    //Sample clock source group
-//
-//    AD1CON2bits.VCFG    = 0b001;  //Set ADC VR+ to VREF+ pin and VR- to AVSS pin
-////    AD1CON2bits.OFFCAL  = 0b0;    //Disable Offset Calibration mode
-//    AD1CON2bits.CSCNA   = 0b0;    //Do not scan inputs
-//    AD1CON2bits.SMPI    = 0b0000; //Interrupts at the completion of conversion for each sample/convert sequence
-//    AD1CON2bits.BUFM    = 0b0;    //Buffer configured as one 16-word buffer ADC1BUF(15...0.)
-//    AD1CON2bits.ALTS    = 0b0;    //Always use MUX A input multiplexer settings
-////    AD1CON2bits.CHPS    = 0b00; //Channel select bits
-//
-//    AD1CON3bits.ADRC    = 0b1;    //ADC internal RC clock
-//    AD1CON3bits.SAMC    = 0b11111;//Auto-sample Time bits: 31 TAD */
-////    AD1CON4bits.ADDMAEN = 0b0;
-//    AD1CON1bits.ADON = 1;
-//    }
+#define LCD_E (_LATD10)
+#define LCD_RW (_LATD11)
+#define LCD_RS (_LATC12)
+#define LCD_DB0 (_LATE0)
+#define LCD_DB1 (_LATE1)
+#define LCD_DB2 (_LATE2)
+#define LCD_DB3 (_LATE3)
+#define LCD_DB4 (_LATE4)
+#define LCD_DB5 (_LATE5)
+#define LCD_DB6 (_LATE6)
+#define LCD_DB7 (_LATE7)
 
+#define ESOS_LCD_IN_OUTPUT_MODE ESOS_USER_FLAG_8
+
+#define LCD44780_CONFIG_BASIC() \
+    CONFIG_RD10_AS_DIG_OUTPUT(); /*Enable*/ \
+    CONFIG_RD11_AS_DIG_OUTPUT(); /*Read/Write*/ \
+    CONFIG_RC12_AS_DIG_OUTPUT() /*Register Select*/
+
+#define LCD44780_CONFIG_OUTPUT() \
+    CONFIG_RE0_AS_DIG_OUTPUT(); /*DB0 (output)*/ \
+    DISABLE_RE0_PULLUP(); \
+    CONFIG_RE1_AS_DIG_OUTPUT(); /*DB1 (output)*/ \
+    DISABLE_RE1_PULLUP(); \
+    CONFIG_RE2_AS_DIG_OUTPUT(); /*DB2 (output)*/ \
+    DISABLE_RE2_PULLUP(); \
+    CONFIG_RE3_AS_DIG_OUTPUT(); /*DB3 (output)*/ \
+    DISABLE_RE3_PULLUP(); \
+    CONFIG_RE4_AS_DIG_OUTPUT(); /*DB4 (output)*/ \
+    DISABLE_RE4_PULLUP(); \
+    CONFIG_RE5_AS_DIG_OUTPUT(); /*DB5 (output)*/ \
+    DISABLE_RE5_PULLUP(); \
+    CONFIG_RE6_AS_DIG_OUTPUT(); /*DB6 (output)*/ \
+    DISABLE_RE6_PULLUP(); \
+    CONFIG_RE7_AS_DIG_OUTPUT(); /*DB7 (output)*/ \
+    DISABLE_RE7_PULLUP(); \
+    DELAY_US(1)
+
+#define LCD44780_CONFIG_INPUT() \
+    CONFIG_RE0_AS_DIG_INPUT(); /*DB0 (input)*/ \
+    ENABLE_RE0_PULLUP(); \
+    CONFIG_RE1_AS_DIG_INPUT(); /*DB1 (input)*/ \
+    ENABLE_RE1_PULLUP(); \
+    CONFIG_RE2_AS_DIG_INPUT(); /*DB2 (input)*/ \
+    ENABLE_RE2_PULLUP(); \
+    CONFIG_RE3_AS_DIG_INPUT(); /*DB3 (input)*/ \
+    ENABLE_RE3_PULLUP(); \
+    CONFIG_RE4_AS_DIG_INPUT(); /*DB4 (input)*/ \
+    ENABLE_RE4_PULLUP(); \
+    CONFIG_RE5_AS_DIG_INPUT(); /*DB5 (input)*/ \
+    ENABLE_RE5_PULLUP(); \
+    CONFIG_RE6_AS_DIG_INPUT(); /*DB6 (input)*/ \
+    ENABLE_RE6_PULLUP(); \
+    CONFIG_RE7_AS_DIG_INPUT(); /*DB7 (input)*/ \
+    ENABLE_RE7_PULLUP(); \
+    DELAY_US(1)
 
 #endif // closes the #ifndef block
