@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 static char str_INSTRUCTIONS1[] = "Press SW1 to sample the temperature once.\nPress SW2 to begin sampling the temperature once per second.\nPress SW3 for further options.\n\n";
-static char str_INSTRUCTIONS2[] = "Press SW1 or SW2 to quit sampling.\n";
-static char str_ONE_SHOT_POT_PRE[] = "Temperature reading: ";
+static char str_INSTRUCTIONS2[] = "Press SW1 or SW2 or SW3 to quit sampling.\n";
+static char str_ONE_SHOT_POT_PRE[] = "Temperature reading or calculation: ";
 static char str_OPTIONS1[] = "Use the numbers on your keyboard to select an option.\n1. one-shot\n2. average\n3. minimum\n4. maximum\n5. median\n\n";
 static char str_OPTIONS2[] = "1. two\n2. four\n3. eight\n4. sixteen\n5. thirty-two\n6. sixty-four\n\n";
 static char str_AVG[] = "Average: ";
