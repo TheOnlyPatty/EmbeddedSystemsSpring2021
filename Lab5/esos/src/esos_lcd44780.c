@@ -177,7 +177,7 @@ void esos_lcd44780_configDisplay( void )
 
 void esos_lcd44780_init( void )
 {
-	// Set up the hardware aspects of the HWxxx interface of the LCD module service
+	// Set up the hardware aspects of the pic24 interface of the LCD module service
 	//    direction, thresholds, etc
 	__esos_lcd44780_hw_configDataPinsAsOutput();
 	__ESOS_LCD44780_HW_SET_RW_WRITE();
