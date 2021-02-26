@@ -26,17 +26,7 @@
  *
  *
  */
- 
- /**
- * \addtogroup ESOS_Task_LCD_Service
- * @{
- */
- 
- /** \file
- *  This file contains macros, prototypes, and definitions for
- *  LCD services for ESOS tasks.
- *
- */
+
  
 #ifndef ESOS_LCD_H
 #define ESOS_LCD_H

@@ -30,16 +30,6 @@
 #ifndef ESOS_pic24_LCD_H
 #define ESOS_pic24_LCD_H
 
-/**
- * \addtogroup ESOS_Task_LCD_Service
- * @{
- */
- 
- /** \file
- *  \brief This file contains routines which configure and
- *  use an LCD interface on the Microchip PIC24 MCUs.
- */
-
 /* I N C L U D E S **********************************************************/
 #include <esos_lcd.h>
 
