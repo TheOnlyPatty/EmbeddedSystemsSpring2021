@@ -41,14 +41,14 @@ void __esos_lcd44780_pic24_config ( void ) //TODO: not finished
 void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) { //write u8_data to data pins
     __esos_lcd44780_pic24_configDataPinsAsOutput();
     //TODO: may need to send a command or assert a bit here to write
-    LCD_DB0 = u8_data && 0b00000001;
-    LCD_DB1 = u8_data && 0b00000010;
-    LCD_DB2 = u8_data && 0b00000100;
-    LCD_DB3 = u8_data && 0b00001000;
-    LCD_DB4 = u8_data && 0b00010000;
-    LCD_DB5 = u8_data && 0b00100000;
-    LCD_DB6 = u8_data && 0b01000000;
-    LCD_DB7 = u8_data && 0b10000000;
+    LCD_DB0 = u8_data & 0b00000001;
+    LCD_DB1 = u8_data & 0b00000010;
+    LCD_DB2 = u8_data & 0b00000100;
+    LCD_DB3 = u8_data & 0b00001000;
+    LCD_DB4 = u8_data & 0b00010000;
+    LCD_DB5 = u8_data & 0b00100000;
+    LCD_DB6 = u8_data & 0b01000000;
+    LCD_DB7 = u8_data & 0b10000000;
     return;
 }
 

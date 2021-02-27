@@ -35,11 +35,11 @@
 #define SW2 (!_RB12)
 #define SW3 (!_RC15)
 
-#define SW1_PRESSED (_RB13 == 0)
+#define SW1_PRESSED  (_RB13 == 0)
 #define SW1_RELEASED (_RB13 == 1)
-#define SW2_PRESSED (_RB12 == 0)
+#define SW2_PRESSED  (_RB12 == 0)
 #define SW2_RELEASED (_RB12 == 1)
-#define SW3_PRESSED (_RC15 == 0)
+#define SW3_PRESSED  (_RC15 == 0)
 #define SW3_RELEASED (_RC15 == 1)
 
 #define CONFIG_SW1() \

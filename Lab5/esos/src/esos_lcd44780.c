@@ -90,7 +90,7 @@ ESOS_USER_TASK( __esos_lcd44780_service )
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_ENTRY_MODE_SET |
                                           ESOS_LCD44780_CMD_RETURN_HOME    ); //entry mode set
 
-	// Send startup sequence from datasheet
+	// Send startup sequence from datasheet //TODO: is this needed?
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF);
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_FUNCTION_SET | 0b00011100);
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF |
@@ -355,7 +355,7 @@ ESOS_CHILD_TASK(__esos_lcd44780_read_u8, uint8_t *pu8_data, BOOL b_isData, BOOL 
 	ESOS_TASK_YIELD();
 	*pu8_data = __esos_lcd44780_pic24_getDataPins();
 	__ESOS_LCD44780_PIC24_SET_E_LOW();
-	ESOS_TASK_YIELD();
+	ESOS_TASK_YIELD(); //unnecessary?
 
 	ESOS_TASK_END();
 }
@@ -385,7 +385,7 @@ ESOS_CHILD_TASK(__esos_lcd44780_write_u8, uint8_t u8_data, BOOL b_isData, BOOL b
 	__ESOS_LCD44780_PIC24_SET_E_HIGH();
 	ESOS_TASK_YIELD();
 	__ESOS_LCD44780_PIC24_SET_E_LOW();
-	ESOS_TASK_YIELD();
+	ESOS_TASK_YIELD(); //unnecessary?
 
 	ESOS_TASK_END();
 }
