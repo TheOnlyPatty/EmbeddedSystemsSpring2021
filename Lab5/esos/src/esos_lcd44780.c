@@ -225,6 +225,7 @@ void esos_lcd44780_setCursor( uint8_t u8_row, uint8_t u8_column )
 {
     // Move cursor to (u8_row,u8_column) without changing memory buffer or the display
 	// TODO:  Write hardware-independent code here
+    
 }
 
 void esos_lcd44780_writeChar( uint8_t u8_row, uint8_t u8_column, uint8_t u8_data )
@@ -241,7 +242,16 @@ uint8_t esos_lcd44780_getChar( uint8_t u8_row, uint8_t u8_column )
 void esos_lcd44780_writeBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen )
 {
     // Write u8_bufflen characters from pu8_data to (u8_row,u8_column)
-	// TODO:  Write hardware-independent code here
+    for(i = 0; i < u8_bufflen; i++) {
+        esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *pu8_data;
+        esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row][u8_column] = TRUE;
+        if(++u8_column == 8) {
+            u8_column = 0;
+            ++u8_row % 2;
+        }
+        pu8_data++;
+    }
+    return; //TODO: Is this done? or do i need to do the write commands?
 }
 
 void esos_lcd44780_getBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen )
@@ -254,12 +264,20 @@ void esos_lcd44780_writeString( uint8_t u8_row, uint8_t u8_column, char *psz_dat
 {
     // Write zero-terminated string psz_data to location starting at (u8_row,u8_column)
 	// TODO:  Write hardware-independent code here
+    while(*psz_data != 0) {
+        esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *psz_data;
+        esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row++][u8_column++] = TRUE;
+        pu8_data++;
+    }
+    return;
 }
 
-void esos_lcd44780_setCursorDisplay( BOOL u8_state )
+void esos_lcd44780_setCursorDisplay( BOOL b_state )
 {
-    // Set cursor display state to u8_state
+    // Set cursor display state to b_state
 	// TODO:  Write hardware-independent code here
+    esos_lcd44780_vars.b_cursorShown = b_state;
+    if(b_state == TRUE)
 }
 
 BOOL esos_lcd44780_getCursorDisplay( void )
