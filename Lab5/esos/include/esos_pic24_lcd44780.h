@@ -34,23 +34,23 @@
 #include <esos_lcd.h>
 
 /* PIC24-SPECIFIC MACROS *******************************************************/
-#define  __esos_lcd44780_pic24_config		__esos_lcd44780_pic24_config
+//#define  __esos_lcd44780_pic24_config		__esos_lcd44780_pic24_config
+//
+//#define  __esos_lcd44780_pic24_setDataPins \
+//    __esos_lcd44780_pic24_setDataPins
+//#define  __esos_lcd44780_pic24_getDataPins \
+//    __esos_lcd44780_pic24_getDataPins
+//#define  __esos_lcd44780_pic24_configDataPinsAsInput \
+//    __esos_lcd44780_pic24_configDataPinsAsInput
+//#define  __esos_lcd44780_pic24_configDataPinsAsOutput \
+//    __esos_lcd44780_pic24_configDataPinsAsOutput
 
-#define  __esos_lcd44780_pic24_setDataPins \
-    __esos_lcd44780_pic24_setDataPins
-#define  __esos_lcd44780_pic24_getDataPins \
-    __esos_lcd44780_pic24_getDataPins
-#define  __esos_lcd44780_pic24_configDataPinsAsInput \
-    __esos_lcd44780_pic24_configDataPinsAsInput
-#define  __esos_lcd44780_pic24_configDataPinsAsOutput \
-    __esos_lcd44780_pic24_configDataPinsAsOutput
-
-#define  __ESOS_LCD44780_PIC24_SET_E_HIGH          __ESOS_LCD44780_PIC24_SET_E_HIGH       // E=1
-#define  __ESOS_LCD44780_PIC24_SET_E_LOW           __ESOS_LCD44780_PIC24_SET_E_LOW        // E=0
-#define  __ESOS_LCD44780_PIC24_SET_RW_READ         __ESOS_LCD44780_PIC24_SET_RW_READ      // RW=1
-#define  __ESOS_LCD44780_PIC24_SET_RW_WRITE        __ESOS_LCD44780_PIC24_SET_RW_WRITE     // RW=0
-#define  __ESOS_LCD44780_PIC24_SET_RS_REGISTERS    __ESOS_LCD44780_PIC24_SET_RS_REGISTERS // RS=0
-#define  __ESOS_LCD44780_PIC24_SET_RS_DATA         __ESOS_LCD44780_PIC24_SET_RS_DATA      // RS=1
+#define  __ESOS_LCD44780_PIC24_SET_E_HIGH          LCD_E = 1  // E=1
+#define  __ESOS_LCD44780_PIC24_SET_E_LOW           LCD_E = 0  // E=0
+#define  __ESOS_LCD44780_PIC24_SET_RW_READ         LCD_RW = 1 // RW=1
+#define  __ESOS_LCD44780_PIC24_SET_RW_WRITE        LCD_RW = 0 // RW=0
+#define  __ESOS_LCD44780_PIC24_SET_RS_REGISTERS    LCD_RS = 0 // RS=0
+#define  __ESOS_LCD44780_PIC24_SET_RS_DATA         LCD_RS = 1 // RS=1
 
 #define  __ESOS_LCD44780_PIC24_SET_D0              __ESOS_LCD44780_PIC24_SET_D0
 #define  __ESOS_LCD44780_PIC24_CLEAR_D0            __ESOS_LCD44780_PIC24_CLEAR_D0
