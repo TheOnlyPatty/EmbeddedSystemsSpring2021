@@ -179,7 +179,7 @@ void esos_lcd44780_configDisplay( void )
 
 	esos_lcd44780_clearScreen();
 
-	for(u8_column = 0; u8_column < ESOS_LCD44780_NUM_CUSTOM_CHARS; ++u8_column) {
+	for(u8_column = 0; u8_column < ESOS_LCD44780_NUM_CUSTOM_CHARS; ++u8_column) { //TODO: Do we need to do rows as well?
 		esos_lcd44780_vars.ab_customCharNeedsUpdate[u8_column] = FALSE;
 	}
 }
@@ -212,20 +212,26 @@ void esos_lcd44780_clearScreen( void )
 	}
 
 	esos_lcd44780_setCursor(0,0);
-	esos_lcd44780_vars.b_cursorPositionNeedsUpdate = TRUE; 
+//	esos_lcd44780_vars.b_cursorPositionNeedsUpdate = TRUE; //already performed in set_cursor()
 }
 
 void esos_lcd44780_setCursorHome( void )
 {
 	esos_lcd44780_setCursor(0,0);
-	esos_lcd44780_vars.b_cursorPositionNeedsUpdate = TRUE; 
+//	esos_lcd44780_vars.b_cursorPositionNeedsUpdate = TRUE; //this is performed in the set_cursor function
 }
 
 void esos_lcd44780_setCursor( uint8_t u8_row, uint8_t u8_column )
 {
     // Move cursor to (u8_row,u8_column) without changing memory buffer or the display
-	// TODO:  Write hardware-independent code here
-    
+//    uint8_t u8_DDRAM_ADDR;
+//    if(u8_column > 0) u8_DDRAM_ADDR = 0x40 + u8_row;
+//    else u8_DDRAM_ADDR = u8_row;
+//    ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_SET_DDRAM_ADDR | u8_DDRAM_ADDR);
+    //This section is actually already performed in the main LCD service task
+    esos_lcd44780_vars.u8_cursorRow = u8_row;
+    esos_lcd44780_vars.u8_cursorCol = u8_column;
+    esos_lcd44780_vars.b_cursorPositionNeedsUpdate = TRUE;
 }
 
 void esos_lcd44780_writeChar( uint8_t u8_row, uint8_t u8_column, uint8_t u8_data )
@@ -246,18 +252,20 @@ void esos_lcd44780_writeBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_
         esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *pu8_data;
         esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row][u8_column] = TRUE;
         if(++u8_column == 8) {
-            u8_column = 0;
+            u8_column = 0; //TODO: do i need to wrap to the rows or write to the non-visible DDRAM portion?
             ++u8_row % 2;
         }
         pu8_data++;
     }
-    return; //TODO: Is this done? or do i need to do the write commands?
+    return;
 }
 
 void esos_lcd44780_getBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen )
 {
     // Return pu8_data with u8_bufflen characters currently displayed beginning at (u8_row,u8_column)
 	// TODO:  Write hardware-independent code here
+    uint8_t u8_DDRAM_ADDR = (u8_row > 0 ? 0x40 : 0x00) | u8_col);
+    ESOS_TASK_WAIT_LCD44780_READ_DATA(u8_DDRAM_ADDR);
 }
 
 void esos_lcd44780_writeString( uint8_t u8_row, uint8_t u8_column, char *psz_data )

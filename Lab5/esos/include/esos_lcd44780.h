@@ -52,8 +52,8 @@
 #define ESOS_LCD44780_CMD_FUNCTION_SET_8_BIT     0b00010000
 #define ESOS_LCD44780_CMD_SET_CGRAM_ADDR         0b01000000
 #define ESOS_LCD44780_CMD_SET_DDRAM_ADDR         0b10000000
-#define ESOS_LCD44780_MEM_WIDTH                  40
-#define ESOS_LCD44780_MEM_HEIGHT                 2
+#define ESOS_LCD44780_MEM_WIDTH                  0x40
+#define ESOS_LCD44780_MEM_HEIGHT                 0x2
 #define ESOS_LCD44780_NUM_CUSTOM_CHARS           8
 
 #define LCD44780_READ                       1

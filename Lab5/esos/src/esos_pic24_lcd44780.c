@@ -30,7 +30,7 @@
 #include "esos_pic24_lcd.h"
 
 
-void __esos_lcd44780_pic24_config ( void ) //TODO: not finished
+void __esos_lcd44780_pic24_config ( void ) //TODO: maybe not finished
 {
     // Set up the hardware aspects of the pic24 interface of the LCD module service
     //    direction, thresholds, etc beyond what is already done in esos_lcd44780_config()
@@ -40,7 +40,6 @@ void __esos_lcd44780_pic24_config ( void ) //TODO: not finished
 
 void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) { //write u8_data to data pins
     __esos_lcd44780_pic24_configDataPinsAsOutput();
-    //TODO: may need to send a command or assert a bit here to write
     LCD_DB0 = u8_data & 0b00000001;
     LCD_DB1 = u8_data & 0b00000010;
     LCD_DB2 = u8_data & 0b00000100;
@@ -54,7 +53,6 @@ void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) { //write u8_data to da
 
 uint8_t __esos_lcd44780_pic24_getDataPins( void ) { //read u8_data to data pins
     __esos_lcd44780_pic24_configDataPinsAsInput();
-    //TODO: may need to send a command or assert a bit here to read
     uint8_t u8_read_buffer = (
         LCD_DB0 << 0 |
         LCD_DB1 << 1 |
