@@ -53,16 +53,14 @@ void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) { //write u8_data to da
 
 uint8_t __esos_lcd44780_pic24_getDataPins( void ) { //read u8_data to data pins
     __esos_lcd44780_pic24_configDataPinsAsInput();
-    uint8_t u8_read_buffer = (
-        LCD_DB0 << 0 |
-        LCD_DB1 << 1 |
-        LCD_DB2 << 2 |
-        LCD_DB3 << 3 |
-        LCD_DB4 << 4 |
-        LCD_DB5 << 5 |
-        LCD_DB6 << 6 |
-        LCD_DB7 << 7 );
-    return u8_read_buffer;
+    return (LCD_DB0 << 0 |
+            LCD_DB1 << 1 |
+            LCD_DB2 << 2 |
+            LCD_DB3 << 3 |
+            LCD_DB4 << 4 |
+            LCD_DB5 << 5 |
+            LCD_DB6 << 6 |
+            LCD_DB7 << 7 );
 }
 
 void __esos_lcd44780_pic24_configDataPinsAsInput( void ) { //Configure data pins as inputs and clear esos user flag
