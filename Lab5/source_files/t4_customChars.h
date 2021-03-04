@@ -8,7 +8,7 @@
 000 00000     0x00
 000 00000     0x00
 */
-char pot_line[] = 0x0000001F00000000;
+char pot_slider_line[] = 0x0000001F00000000;
 
 /*
 000 00001     0x01
@@ -20,7 +20,7 @@ char pot_line[] = 0x0000001F00000000;
 000 00001     0x01
 000 00000     0x00
 */
-char pot_sider_pos5[] = 0x0101011F01010100;
+char pot_slider_pos5[] = 0x0101011F01010100;
 
 /*
 000 00010     0x02
@@ -32,7 +32,7 @@ char pot_sider_pos5[] = 0x0101011F01010100;
 000 00010     0x02
 000 00000     0x00
 */
-char pot_sider_pos4[] = 0x0202021F02020200;
+char pot_slider_pos4[] = 0x0202021F02020200;
 
 /*
 000 00100     0x04
@@ -44,7 +44,7 @@ char pot_sider_pos4[] = 0x0202021F02020200;
 000 00100     0x04
 000 00000     0x00
 */
-char pot_sider_pos3[] = 0x0404041F04040400;
+char pot_slider_pos3[] = 0x0404041F04040400;
 
 /*
 000 01000     0x08
@@ -56,7 +56,7 @@ char pot_sider_pos3[] = 0x0404041F04040400;
 000 01000     0x08
 000 00000     0x00
 */
-char pot_sider_pos2[] = 0x0808081F08080800;
+char pot_slider_pos2[] = 0x0808081F08080800;
 
 /*
 000 10000     0x10
@@ -68,4 +68,4 @@ char pot_sider_pos2[] = 0x0808081F08080800;
 000 10000     0x10
 000 00000     0x00
 */
-char pot_sider_pos1[] = 0x1010101F10101000;
+char pot_slider_pos1[] = 0x1010101F10101000;
