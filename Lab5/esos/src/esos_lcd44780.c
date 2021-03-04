@@ -279,7 +279,7 @@ BOOL esos_lcd44780_getCursorDisplay( void ) { // Return cursor display state
     return esos_lcd44780_vars.b_cursorShown;
 }
 
-void esos_lcd44780_setCursorBlink( BOOL b_state ) { // Set cursor blink state to u8_state
+void esos_lcd44780_setCursorBlink( BOOL b_state ) { // Set cursor blink state to b_state
     esos_lcd44780_vars.b_cursorBlink = b_state;
     esos_lcd44780_vars.b_cursorBlinkNeedsUpdate = TRUE;
 }
@@ -288,7 +288,7 @@ BOOL esos_lcd44780_getCursorBlink( void ) { // Return cursor blink state
     return esos_lcd44780_vars.b_cursorBlink;
 }
 
-void esos_lcd44780_setDisplayVisible( BOOL b_state ) { // Set display visible state to u8_state
+void esos_lcd44780_setDisplayVisible( BOOL b_state ) { // Set display visible state to b_state
     esos_lcd44780_vars.b_displayVisible = b_state;
     esos_lcd44780_vars.b_displayVisibleNeedsUpdate = TRUE;
 }
