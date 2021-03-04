@@ -247,27 +247,25 @@ void esos_lcd44780_writeBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_
         }
         pu8_data++;
     }
-    return;
 }
 
-void esos_lcd44780_getBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen )
-{
+void esos_lcd44780_getBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen ) {
     // Return pu8_data with u8_bufflen characters currently displayed beginning at (u8_row,u8_column)
-	// TODO:  Write hardware-independent code here
-    uint8_t u8_DDRAM_ADDR = (u8_row > 0 ? 0x40 : 0x00) | u8_col);
-    ESOS_TASK_WAIT_LCD44780_READ_DATA(u8_DDRAM_ADDR);
+    ESOS_TASK_WAIT_LCD44780_SET_DATA_ADDRESS((u8_row > 0 ? 0x40 : 0x00) | u8_col);
+    for(int i = 0; i < u8_bufflen; i++) {
+        ESOS_TASK_WAIT_LCD44780_READ_DATA(pu8_data); //TODO: does this need to be *pu8_data?
+        pu8_data++; //not sure if unwanted behavior will come up if i define the ++ within the macro
+        //TODO: is it correct to increment by 1 byte or do i need to increment by 8 bits?
+    }
 }
 
-void esos_lcd44780_writeString( uint8_t u8_row, uint8_t u8_column, char *psz_data )
-{
+void esos_lcd44780_writeString( uint8_t u8_row, uint8_t u8_column, char *psz_data ) {
     // Write zero-terminated string psz_data to location starting at (u8_row,u8_column)
-	// TODO:  Write hardware-independent code here
     while(*psz_data != 0) {
         esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *psz_data;
         esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row++][u8_column++] = TRUE;
-        pu8_data++;
+        pu8_data++; //TODO: is it correct to increment by 1 byte or do i need to increment by 8 bits?
     }
-    return;
 }
 
 void esos_lcd44780_setCursorDisplay( BOOL b_state ) { // Set cursor display state to b_state
@@ -299,12 +297,16 @@ BOOL esos_lcd44780_getDisplayVisible( void ) { // Return display visible state
 
 void esos_lcd44780_setCustomChar( uint8_t u8_charSlot, uint8_t *pu8_charData ) {
     // Set custom character memory for u8_charSlot to data in pu8_charData
-	// TODO:  Write hardware-independent code here
+    if(u8_charSlot > 0b111111) return; //make sure char slot is within range so that unwanted command behavior isnt possible
+    ESOS_TASK_WAIT_LCD44780_SET_CG_ADDRESS(u8_charSlot);
+    ESOS_TASK_WAIT_LCD44780_WRITE_DATA(pu8_charData); //TODO: not sure if *pu8_charData needs to be used instead
 }
 
 void esos_lcd44780_getCustomChar( uint8_t u8_charSlot, uint8_t *pu8_charData ) {
     // Return pu8_charData with custom character memory for u8_charSlot
-	// TODO:  Write hardware-independent code here
+    if(u8_charSlot > 0b111111) return; //make sure char slot is within range so that unwanted command behavior isnt possible
+    ESOS_TASK_WAIT_LCD44780_SET_CG_ADDRESS(u8_charSlot);
+    ESOS_TASK_WAIT_LCD44780_READ_DATA(pu8_charData); //TODO: not sure if *pu8_charData needs to be used instead
 }
 
 BOOL esos_lcd44780_isCurrent( void ) {
