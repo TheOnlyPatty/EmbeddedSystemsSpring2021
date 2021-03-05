@@ -27,7 +27,7 @@
  *
  */
 
-#include "esos_pic24_lcd.h"
+#include "esos_pic24_lcd44780.h"
 
 
 void __esos_lcd44780_pic24_config ( void ) //TODO: maybe not finished

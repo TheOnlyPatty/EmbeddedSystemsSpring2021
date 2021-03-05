@@ -27,7 +27,7 @@
  *
  */
 
- 
+#include "revF14.h"
 #include "esos_lcd44780.h"
 #include "esos_pic24_lcd44780.h"
 #include <esos.h>
@@ -107,8 +107,8 @@ ESOS_USER_TASK( __esos_lcd44780_service ) {
 		}
 
 		if(esos_lcd44780_vars.b_cursorShownNeedsUpdate ||
-		   esos_lcd44780_vars.b_cursorBlinkNeedsUpdate ||
-		   esos_lcd44780_vars.b_displayVisibleNeedsUpdate) {
+		    esos_lcd44780_vars.b_cursorBlinkNeedsUpdate ||
+		    esos_lcd44780_vars.b_displayVisibleNeedsUpdate) {
 			esos_lcd44780_vars.b_cursorShownNeedsUpdate = FALSE;
 			esos_lcd44780_vars.b_cursorBlinkNeedsUpdate = FALSE;
 			esos_lcd44780_vars.b_displayVisibleNeedsUpdate = FALSE;
@@ -185,8 +185,8 @@ void esos_lcd44780_init( void ) {
 	// Set up the hardware aspects of the pic24 interface of the LCD module service
 	//    direction, thresholds, etc
 	__esos_lcd44780_pic24_configDataPinsAsOutput();
-	__ESOS_LCD44780_PIC24_SET_RW_WRITE();
-	__ESOS_LCD44780_PIC24_SET_RS_REGISTERS();
+	__ESOS_LCD44780_PIC24_SET_RW_WRITE;
+	__ESOS_LCD44780_PIC24_SET_RS_REGISTERS;
 	
 	// give pic24 specific code a chance to do anything else to init/config
     __esos_lcd44780_pic24_config();
@@ -237,6 +237,7 @@ uint8_t esos_lcd44780_getChar( uint8_t u8_row, uint8_t u8_column ) {
 }
 
 void esos_lcd44780_writeBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen ) {
+	int i = 0;
     // Write u8_bufflen characters from pu8_data to (u8_row,u8_column)
     for(i = 0; i < u8_bufflen; i++) {
         esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *pu8_data;
@@ -251,21 +252,34 @@ void esos_lcd44780_writeBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_
 
 void esos_lcd44780_getBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen ) {
     // Return pu8_data with u8_bufflen characters currently displayed beginning at (u8_row,u8_column)
-    ESOS_TASK_WAIT_LCD44780_SET_DATA_ADDRESS((u8_row > 0 ? 0x40 : 0x00) | u8_col);
-    for(int i = 0; i < u8_bufflen; i++) {
-        ESOS_TASK_WAIT_LCD44780_READ_DATA(pu8_data); //TODO: does this need to be *pu8_data?
-        pu8_data++; //not sure if unwanted behavior will come up if i define the ++ within the macro
+    //ESOS_TASK_WAIT_LCD44780_SET_DATA_ADDRESS((u8_row > 0 ? 0x40 : 0x00) | u8_col);
+	int i = 0;
+    for(i = 0; i < u8_bufflen; i++) {
+        //ESOS_TASK_WAIT_LCD44780_READ_DATA(pu8_data); //TODO: does this need to be *pu8_data?
+        //pu8_data++; //not sure if unwanted behavior will come up if i define the ++ within the macro
         //TODO: is it correct to increment by 1 byte or do i need to increment by 8 bits?
+
+		pu8_data[i] = esos_lcd44780_getChar(u8_row, (u8_column + i));
     }
 }
 
 void esos_lcd44780_writeString( uint8_t u8_row, uint8_t u8_column, char *psz_data ) {
+
+	int i = 0;
+
     // Write zero-terminated string psz_data to location starting at (u8_row,u8_column)
-    while(*psz_data != 0) {
+
+    /* // This is basically the same thing as writechar, so I think it looks better to just call writeChar
+	   // Also, it was giving me an error before
+	while(*psz_data != 0) {
         esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *psz_data;
         esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row++][u8_column++] = TRUE;
         pu8_data++; //TODO: is it correct to increment by 1 byte or do i need to increment by 8 bits?
     }
+	*/
+	while (psz_data[i] != '\0') {
+		esos_lcd44780_writeChar(u8_row, (u8_column + i), psz_data[i]);
+	}
 }
 
 void esos_lcd44780_setCursorDisplay( BOOL b_state ) { // Set cursor display state to b_state
@@ -296,25 +310,42 @@ BOOL esos_lcd44780_getDisplayVisible( void ) { // Return display visible state
 }
 
 void esos_lcd44780_setCustomChar( uint8_t u8_charSlot, uint8_t *pu8_charData ) {
+	/*
     // Set custom character memory for u8_charSlot to data in pu8_charData
     if(u8_charSlot > 0b111111) return; //make sure char slot is within range so that unwanted command behavior isnt possible
     ESOS_TASK_WAIT_LCD44780_SET_CG_ADDRESS(u8_charSlot);
     ESOS_TASK_WAIT_LCD44780_WRITE_DATA(pu8_charData); //TODO: not sure if *pu8_charData needs to be used instead
+	*/
+	int i = 0;
+
+	for (i = 0; i < 8; i++) {
+		esos_lcd44780_vars.ast_customChar[u8_charSlot].au8_data[i] = pu8_charData[i];
+	}
+
+	esos_lcd44780_vars.ab_customCharNeedsUpdate[u8_charSlot] = TRUE;
 }
 
 void esos_lcd44780_getCustomChar( uint8_t u8_charSlot, uint8_t *pu8_charData ) {
+	/*
     // Return pu8_charData with custom character memory for u8_charSlot
     if(u8_charSlot > 0b111111) return; //make sure char slot is within range so that unwanted command behavior isnt possible
     ESOS_TASK_WAIT_LCD44780_SET_CG_ADDRESS(u8_charSlot);
     ESOS_TASK_WAIT_LCD44780_READ_DATA(pu8_charData); //TODO: not sure if *pu8_charData needs to be used instead
+	*/
+
+	int i = 0;
+
+	for (i = 0; i < 8; i++) {
+		pu8_charData[i] = esos_lcd44780_vars.ast_customChar[u8_charSlot].au8_data[i];
+	}
 }
 
 BOOL esos_lcd44780_isCurrent( void ) {
 	uint8_t u8_row, u8_column;
 
 	if(esos_lcd44780_vars.b_cursorPositionNeedsUpdate ||
-	   esos_lcd44780_vars.b_cursorBlinkNeedsUpdate ||
-	   esos_lcd44780_vars.b_displayVisibleNeedsUpdate) {
+	   	esos_lcd44780_vars.b_cursorBlinkNeedsUpdate ||
+	   	esos_lcd44780_vars.b_displayVisibleNeedsUpdate) {
 		return FALSE;
 	}
 
@@ -346,18 +377,18 @@ ESOS_CHILD_TASK(__esos_lcd44780_read_u8, uint8_t *pu8_data, BOOL b_isData, BOOL 
 	}
 
 	if( b_isData ){
-        __ESOS_LCD44780_PIC24_SET_RS_DATA();
+        __ESOS_LCD44780_PIC24_SET_RS_DATA;
     } else {
-        __ESOS_LCD44780_PIC24_SET_RS_REGISTERS();
+        __ESOS_LCD44780_PIC24_SET_RS_REGISTERS;
     }
     
-    __ESOS_LCD44780_PIC24_SET_RW_READ();
+    __ESOS_LCD44780_PIC24_SET_RW_READ;
 	__esos_lcd44780_pic24_configDataPinsAsInput();
 
-	__ESOS_LCD44780_PIC24_SET_E_HIGH();
+	__ESOS_LCD44780_PIC24_SET_E_HIGH;
 	ESOS_TASK_YIELD();
 	*pu8_data = __esos_lcd44780_pic24_getDataPins();
-	__ESOS_LCD44780_PIC24_SET_E_LOW();
+	__ESOS_LCD44780_PIC24_SET_E_LOW;
 	ESOS_TASK_YIELD(); //unnecessary?
 
 	ESOS_TASK_END();
@@ -374,20 +405,22 @@ ESOS_CHILD_TASK(__esos_lcd44780_write_u8, uint8_t u8_data, BOOL b_isData, BOOL b
 	}
 
 	if( b_isData ){
-        __ESOS_LCD44780_PIC24_SET_RS_DATA();
+        __ESOS_LCD44780_PIC24_SET_RS_DATA;
     } else {
-        __ESOS_LCD44780_PIC24_SET_RS_REGISTERS();
+        __ESOS_LCD44780_PIC24_SET_RS_REGISTERS;
     }
 	
-    __ESOS_LCD44780_PIC24_SET_RW_WRITE();
+    __ESOS_LCD44780_PIC24_SET_RW_WRITE;
 	__esos_lcd44780_pic24_configDataPinsAsOutput();
     
     __esos_lcd44780_pic24_setDataPins( u8_data );
 
-	__ESOS_LCD44780_PIC24_SET_E_HIGH();
-	ESOS_TASK_YIELD();
-	__ESOS_LCD44780_PIC24_SET_E_LOW();
-	ESOS_TASK_YIELD(); //unnecessary?
+	__ESOS_LCD44780_PIC24_SET_E_HIGH;
+	//ESOS_TASK_YIELD();
+	ESOS_TASK_WAIT_TICKS(1);
+	__ESOS_LCD44780_PIC24_SET_E_LOW;
+	//ESOS_TASK_YIELD(); //unnecessary?
+	ESOS_TASK_WAIT_TICKS(1);
 
 	ESOS_TASK_END();
 }
@@ -399,11 +432,11 @@ ESOS_CHILD_TASK( __esos_task_wait_lcd44780_while_busy  ) {
     
 	while ( TRUE ) {
 		__esos_lcd44780_pic24_configDataPinsAsInput();
-		__ESOS_LCD44780_PIC24_SET_RS_REGISTERS();
-		__ESOS_LCD44780_PIC24_SET_RW_READ();
-		__ESOS_LCD44780_PIC24_SET_E_HIGH();
+		__ESOS_LCD44780_PIC24_SET_RS_REGISTERS;
+		__ESOS_LCD44780_PIC24_SET_RW_READ;
+		__ESOS_LCD44780_PIC24_SET_E_HIGH;
 		b_pic24_lcd_isBusy = (__esos_lcd44780_pic24_getDataPins() & 0x80);
-		__ESOS_LCD44780_PIC24_SET_E_LOW();
+		__ESOS_LCD44780_PIC24_SET_E_LOW;
         if ( b_pic24_lcd_isBusy ){
             ESOS_TASK_YIELD();
         } else {

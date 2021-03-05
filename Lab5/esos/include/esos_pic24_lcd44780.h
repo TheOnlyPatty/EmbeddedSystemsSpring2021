@@ -31,7 +31,8 @@
 #define ESOS_pic24_LCD_H
 
 /* I N C L U D E S **********************************************************/
-#include <esos_lcd.h>
+#include "revF14.h"
+#include <esos_lcd44780.h>
 
 /* PIC24-SPECIFIC MACROS *******************************************************/
 
