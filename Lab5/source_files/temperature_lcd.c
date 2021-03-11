@@ -8,7 +8,7 @@
 #include "t5_customChars.h"
 #include <stdio.h>
 
-#define REFRESH_RATE 150 // Prevents crashes of BullyCPP. Adjust for taste.
+#define REFRESH_RATE 100 // Controls how often the sensors are polled. Adjust for taste.
 
 //static char str_INSTRUCTIONS1[] = "Press SW1 to sample the temperature once.\nPress SW2 to begin sampling the temperature once per second.\nPress SW3 for further options.\n\n";
 //static char str_INSTRUCTIONS2[] = "Press SW1 or SW2 or SW3 to quit sampling.\n";
@@ -64,6 +64,7 @@ ESOS_USER_TASK(SerialOutput) {
     static uint32_t u32_temp_int;
     static uint32_t u32_temp_dec;
     static char str_temp_temp[12];
+    static char str_temp_int[12];
 
     ESOS_TASK_BEGIN();
     while (1) {
@@ -72,21 +73,18 @@ ESOS_USER_TASK(SerialOutput) {
             if(MENU_STATE == CONTINUOUS_POT) {
                 esos_lcd44780_slider_init();
                 ESOS_TASK_WAIT_ON_AVAILABLE_SENSOR(POT_CHANNEL, ESOS_SENSOR_VREF_3V3);
-                //while(MENU_STATE == CONTINUOUS_POT) {
                 ESOS_TASK_WAIT_SENSOR_READ(pu16_data, processing_mode, ESOS_SENSOR_FORMAT_BITS);
                 ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
                 ESOS_TASK_WAIT_ON_SEND_STRING(str_POT_READING);
                 ESOS_TASK_WAIT_ON_SEND_UINT16_AS_HEX_STRING(pu16_data);
                 ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
                 ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
-                //ESOS_TASK_WAIT_TICKS(1000);
-                //}
                 ESOS_SENSOR_CLOSE();
 
                 esos_lcd44780_writeString(0, 0, "pot 0x");
 
                 static uint8_t au8_slider[8];
-                static char pot_value[3];
+                static char pot_value[3] = "00";
                 static uint8_t i;
                 for (i = 0; i < 8; i++) {
                     au8_slider[i] = SLIDER_LINE;
@@ -95,23 +93,14 @@ ESOS_USER_TASK(SerialOutput) {
                 i = pu16_data >> 9;
 
                 au8_slider[i] = (((pu16_data & 0x1FF) / 0x067) + 1);
-                uint32_to_str(pu16_data >> 4, pot_value, 3);
-
-                /*
-                printf("\n\n");
-                static int j = 0;
-                for (j = 0; j < 3; j++) {
-                    printf("%u", au8_slider[j]);
-                }
-                printf("\n\n");
-                */
+                uint32_to_str(pu16_data >> 4, pot_value, 3, 16);
 
                 esos_lcd44780_writeString(0, 6, pot_value);
                 esos_lcd44780_writeBuffer(1, 0, au8_slider, 8);
             }
             else if(MENU_STATE == CONTINUOUS_TEMP) {
+                esos_lcd44780_bar_init();
                 ESOS_TASK_WAIT_ON_AVAILABLE_SENSOR(THERM_CHANNEL, ESOS_SENSOR_VREF_3V0);
-                //while(MENU_STATE == CONTINUOUS_TEMP) {
                 ESOS_TASK_WAIT_SENSOR_READ(pu16_data, ESOS_SENSOR_ONE_SHOT, ESOS_SENSOR_FORMAT_VOLTAGE);
                 ESOS_TASK_WAIT_ON_AVAILABLE_OUT_COMM();
 
@@ -124,30 +113,110 @@ ESOS_USER_TASK(SerialOutput) {
                 ESOS_TASK_WAIT_ON_SEND_STRING(str_TEMP_READING);
                 ESOS_TASK_WAIT_ON_SEND_UINT16_AS_HEX_STRING(pu16_data);
                 ESOS_TASK_WAIT_ON_SEND_STRING(str_EQUALS);
-                uint32_to_str(u32_temp_int, str_temp_temp, 12);
+                uint32_to_str(u32_temp_int, str_temp_temp, 12, 10);
                 ESOS_TASK_WAIT_ON_SEND_STRING(str_temp_temp);
-                    ESOS_TASK_WAIT_ON_SEND_UINT8('.');
-                    if (u32_temp_dec >= 0 && u32_temp_dec <= 9) {
-                        ESOS_TASK_WAIT_ON_SEND_UINT8('0');
-                    }
-                    uint32_to_str(u32_temp_dec, str_temp_temp, 12);
-                    ESOS_TASK_WAIT_ON_SEND_STRING(str_temp_temp);
-                    ESOS_TASK_WAIT_ON_SEND_STRING(str_CELSIUS);
-                    
-                ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
-                //ESOS_TASK_WAIT_TICKS(1000);
 
+                // Store the value returned from uint32_to_str into another char array to save the values becuase pointers
+                int i = 0;
+                for (i = 0; i < 2; i++) {
+                    str_temp_int[i] = str_temp_temp[i];
+                }
+
+                ESOS_TASK_WAIT_ON_SEND_UINT8('.');
+                if (u32_temp_dec >= 0 && u32_temp_dec <= 9) {
+                    ESOS_TASK_WAIT_ON_SEND_UINT8('0');
+                }
+                uint32_to_str(u32_temp_dec, str_temp_temp, 12, 10);
+                ESOS_TASK_WAIT_ON_SEND_STRING(str_temp_temp);
+                ESOS_TASK_WAIT_ON_SEND_STRING(str_CELSIUS);
+                ESOS_SENSOR_CLOSE();
+                ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
+                
+                esos_lcd44780_writeString(0, 0, "LM60");
+                esos_lcd44780_writeString(1, 0, str_temp_int);
+                esos_lcd44780_writeChar(1, 2, 'C');
+
+                uint8_t u8_lcd_top = ' ';
+                uint8_t u8_lcd_bottom = ' ';
+
+                // Temp. range 20 - 35 C
+
+                // u32_temp_int is taken from the mV to Celsius conversion above
+                // If temp < 20 C, do nothing
+                if (u32_temp_int < 20) {
+                // If temp >= 20 C && < 28 C, fill up the bottom bar
+                } 
+                else if (u32_temp_int >= 20 && u32_temp_int < 21) {
+                    u8_lcd_bottom = BAR1;
+                } 
+                else if (u32_temp_int >= 21 && u32_temp_int < 22) {
+                    u8_lcd_bottom = BAR2;
+                } 
+                else if (u32_temp_int >= 22 && u32_temp_int < 23) {
+                    u8_lcd_bottom = BAR3;
+                } 
+                else if (u32_temp_int >= 23 && u32_temp_int < 24) {
+                    u8_lcd_bottom = BAR4;
+                } 
+                else if (u32_temp_int >= 24 && u32_temp_int < 25) {
+                    u8_lcd_bottom = BAR5;
+                } 
+                else if (u32_temp_int >= 25 && u32_temp_int < 26) {
+                    u8_lcd_bottom = BAR6;
+                } 
+                else if (u32_temp_int >= 26 && u32_temp_int < 27) {
+                    u8_lcd_bottom = BAR7;
+                }
+                // At this point the bottom bar is full 
+                else if (u32_temp_int >= 27 && u32_temp_int < 28) {
+                    u8_lcd_bottom = BAR8;
+                }
+                // Start filling up the top bar and keep the bottom bar full
+                else if (u32_temp_int >= 28 && u32_temp_int < 29) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR1;
+                } 
+                else if (u32_temp_int >= 29 && u32_temp_int < 30) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR2;
+                } 
+                else if (u32_temp_int >= 30 && u32_temp_int < 31) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR3;
+                } 
+                else if (u32_temp_int >= 31 && u32_temp_int < 32) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR4;
+                } 
+                else if (u32_temp_int >= 32 && u32_temp_int < 33) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR5;
+                } 
+                else if (u32_temp_int >= 33 && u32_temp_int < 34) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR6;
+                } 
+                else if (u32_temp_int >= 34 && u32_temp_int < 35) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR7;
+                } 
+                else if (u32_temp_int > 35) {
+                    u8_lcd_bottom = BAR8;
+                    u8_lcd_top = BAR8;
+                }
+
+                // Put the characters on the last column
+                esos_lcd44780_writeChar(0, 7, u8_lcd_top);
+                esos_lcd44780_writeChar(1, 7, u8_lcd_bottom);
             }
-            ESOS_SENSOR_CLOSE();
-                //MENU_STATE = INSTRUCT;
-            //}
+            
 
         }
 
         else {
+            // Ghetto timer for controlling the refresh rate
             refresh_timer += 10;
             ESOS_TASK_WAIT_TICKS(10);
-            //continue;
         }
         
         ESOS_TASK_YIELD();
