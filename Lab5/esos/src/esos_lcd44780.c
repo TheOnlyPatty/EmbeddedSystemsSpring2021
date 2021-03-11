@@ -88,6 +88,7 @@ ESOS_USER_TASK( __esos_lcd44780_service ) {
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_ENTRY_MODE_SET |
                                           ESOS_LCD44780_CMD_RETURN_HOME    ); //entry mode set
 
+	/*
 	// Send startup sequence from datasheet //TODO: is this needed?
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF);
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_FUNCTION_SET | 0b00011100);
@@ -96,6 +97,7 @@ ESOS_USER_TASK( __esos_lcd44780_service ) {
                                             ESOS_LCD44780_CMD_DISPLAY_ON_OFF_DISP);
 	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_ENTRY_MODE_SET |
                                             ESOS_LCD44780_CMD_ENTRY_MODE_SET_INC);
+	*/
 
 	while(TRUE) {
 		static uint8_t i, u8_col, u8_row;
@@ -228,16 +230,21 @@ void esos_lcd44780_setCursor( uint8_t u8_row, uint8_t u8_column ) {
 }
 
 void esos_lcd44780_writeChar( uint8_t u8_row, uint8_t u8_column, uint8_t u8_data ) {
-	esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = u8_data;
-	esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row][u8_column] = TRUE;
+	esos_lcd44780_vars.aac_lcdBuffer[u8_row % ESOS_LCD44780_MEM_HEIGHT][u8_column % ESOS_LCD44780_MEM_WIDTH] = u8_data;
+	esos_lcd44780_vars.ab_lcdBufferNeedsUpdate[u8_row % ESOS_LCD44780_MEM_HEIGHT][u8_column % ESOS_LCD44780_MEM_WIDTH] = TRUE;
 }
 
 uint8_t esos_lcd44780_getChar( uint8_t u8_row, uint8_t u8_column ) {
-	return esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column];
+	return esos_lcd44780_vars.aac_lcdBuffer[u8_row % ESOS_LCD44780_MEM_HEIGHT][u8_column % ESOS_LCD44780_MEM_WIDTH];
 }
 
 void esos_lcd44780_writeBuffer( uint8_t u8_row, uint8_t u8_column, uint8_t *pu8_data, uint8_t u8_bufflen ) {
 	int i = 0;
+
+
+	// QUESTIONABLE
+
+
     // Write u8_bufflen characters from pu8_data to (u8_row,u8_column)
     for(i = 0; i < u8_bufflen; i++) {
         esos_lcd44780_vars.aac_lcdBuffer[u8_row][u8_column] = *pu8_data;
@@ -279,6 +286,7 @@ void esos_lcd44780_writeString( uint8_t u8_row, uint8_t u8_column, char *psz_dat
 	*/
 	while (psz_data[i] != '\0') {
 		esos_lcd44780_writeChar(u8_row, (u8_column + i), psz_data[i]);
+		i++;
 	}
 }
 
@@ -386,10 +394,10 @@ ESOS_CHILD_TASK(__esos_lcd44780_read_u8, uint8_t *pu8_data, BOOL b_isData, BOOL 
 	__esos_lcd44780_pic24_configDataPinsAsInput();
 
 	__ESOS_LCD44780_PIC24_SET_E_HIGH;
-	ESOS_TASK_YIELD();
-	*pu8_data = __esos_lcd44780_pic24_getDataPins();
+	ESOS_TASK_WAIT_TICKS(1);
+	*pu8_data |= __esos_lcd44780_pic24_getDataPins();
 	__ESOS_LCD44780_PIC24_SET_E_LOW;
-	ESOS_TASK_YIELD(); //unnecessary?
+	ESOS_TASK_WAIT_TICKS(1); //unnecessary?
 
 	ESOS_TASK_END();
 }
@@ -435,10 +443,10 @@ ESOS_CHILD_TASK( __esos_task_wait_lcd44780_while_busy  ) {
 		__ESOS_LCD44780_PIC24_SET_RS_REGISTERS;
 		__ESOS_LCD44780_PIC24_SET_RW_READ;
 		__ESOS_LCD44780_PIC24_SET_E_HIGH;
-		b_pic24_lcd_isBusy = (__esos_lcd44780_pic24_getDataPins() & 0x80);
+		b_pic24_lcd_isBusy = (__esos_lcd44780_pic24_getDataPins() >> 7);
 		__ESOS_LCD44780_PIC24_SET_E_LOW;
         if ( b_pic24_lcd_isBusy ){
-            ESOS_TASK_YIELD();
+            ESOS_TASK_WAIT_TICKS(1);
         } else {
             ESOS_TASK_EXIT();
         }
