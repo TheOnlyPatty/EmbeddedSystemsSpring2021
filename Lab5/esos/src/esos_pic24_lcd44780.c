@@ -39,15 +39,15 @@ void __esos_lcd44780_pic24_config ( void ) //TODO: maybe not finished
 }
 
 void __esos_lcd44780_pic24_setDataPins( uint8_t u8_data) { //write u8_data to data pins
-    __esos_lcd44780_pic24_configDataPinsAsOutput();
-    LCD_DB0 = u8_data & 0b00000001;
-    LCD_DB1 = u8_data & 0b00000010;
-    LCD_DB2 = u8_data & 0b00000100;
-    LCD_DB3 = u8_data & 0b00001000;
-    LCD_DB4 = u8_data & 0b00010000;
-    LCD_DB5 = u8_data & 0b00100000;
-    LCD_DB6 = u8_data & 0b01000000;
-    LCD_DB7 = u8_data & 0b10000000;
+    __esos_lcd44780_pic24_configDataPinsAsOutput(); // See below for definition
+    LCD_DB0 = (u8_data & 0b00000001);
+    LCD_DB1 = (u8_data & 0b00000010) >> 1;
+    LCD_DB2 = (u8_data & 0b00000100) >> 2;
+    LCD_DB3 = (u8_data & 0b00001000) >> 3;
+    LCD_DB4 = (u8_data & 0b00010000) >> 4;
+    LCD_DB5 = (u8_data & 0b00100000) >> 5;
+    LCD_DB6 = (u8_data & 0b01000000) >> 6;
+    LCD_DB7 = (u8_data & 0b10000000) >> 7;
     return;
 }
 
@@ -65,14 +65,14 @@ uint8_t __esos_lcd44780_pic24_getDataPins( void ) { //read u8_data to data pins
 
 void __esos_lcd44780_pic24_configDataPinsAsInput( void ) { //Configure data pins as inputs and clear esos user flag
     if(esos_IsUserFlagSet(ESOS_LCD_IN_OUTPUT_MODE)) {
-        LCD44780_CONFIG_INPUT();
+        LCD44780_CONFIG_INPUT(); // See revF14.h
         esos_ClearUserFlag(ESOS_LCD_IN_OUTPUT_MODE);
     }
 }
 
 void __esos_lcd44780_pic24_configDataPinsAsOutput( void ) { //Configure data pins as outputs and set esos user flag
     if(!esos_IsUserFlagSet(ESOS_LCD_IN_OUTPUT_MODE)) {
-        LCD44780_CONFIG_OUTPUT();
+        LCD44780_CONFIG_OUTPUT(); // See revF14.h
         esos_SetUserFlag(ESOS_LCD_IN_OUTPUT_MODE);
     }
 }

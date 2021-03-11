@@ -37,6 +37,7 @@
 /* D E F I N E S ************************************************************/
 #define ESOS_TASK_WAIT_ON_LCD44780_REFRESH() ESOS_TASK_WAIT_UNTIL(esos_lcd44780_isCurrent())
 
+#define ESOS_LCD44780_CMD_WAKE 					 0b00110000
 #define ESOS_LCD44780_CMD_CLEAR_DISPLAY          0b00000001
 #define ESOS_LCD44780_CMD_RETURN_HOME            0b00000010
 #define ESOS_LCD44780_CMD_ENTRY_MODE_SET         0b00000100

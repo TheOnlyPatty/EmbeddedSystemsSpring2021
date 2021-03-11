@@ -62,42 +62,41 @@ ESOS_USER_TASK( __esos_lcd44780_service ) {
 	// The LCD service hidden task will need to maintain a buffer containing the LCD character display
 	ESOS_TASK_BEGIN();
 
-    LCD_E = 0;
-	ESOS_TASK_WAIT_TICKS(80); //WES: changed to 80 from 100 // Wait >15 msec after power is applied
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND_NOWAIT(ESOS_LCD44780_CMD_CUR_DISP_SHIFT |
-                                                 ESOS_LCD44780_CMD_FUNCTION_SET   ); //wake up command
-    
-	ESOS_TASK_WAIT_TICKS(10);			// must wait 5ms, busy flag not available
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND_NOWAIT(ESOS_LCD44780_CMD_CUR_DISP_SHIFT |
-                                                 ESOS_LCD44780_CMD_FUNCTION_SET   ); //wake up command
-    
-	ESOS_TASK_WAIT_TICKS(1);			// must wait 160us, busy flag not available
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND_NOWAIT(ESOS_LCD44780_CMD_CUR_DISP_SHIFT |
-                                                 ESOS_LCD44780_CMD_FUNCTION_SET   ); //wake up command
-    
-	ESOS_TASK_WAIT_TICKS(1);			// must wait 160us, busy flag not available
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_FUNCTION_SET         |
-                                          ESOS_LCD44780_CMD_FUNCTION_SET_8_BIT   |
-                                          ESOS_LCD44780_CMD_FUNCTION_SET_2_LINES ); //set 8-bit & 2-line
-    
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_CUR_DISP_SHIFT); //set cursor
-    
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_DISPLAY_ON_OFF      |
-                                          ESOS_LCD44780_CMD_DISPLAY_ON_OFF_DISP ); //Entire display on; cursor on (but does this turn cursor on?)
-    
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_ENTRY_MODE_SET |
-                                          ESOS_LCD44780_CMD_RETURN_HOME    ); //entry mode set
+	#ifndef ESOS_LCD44780_INIT // Maybe unnecessary? But it seems like the task would call this wake up stuff infinitely otherwise
+		LCD_E = 0;
+		ESOS_TASK_WAIT_TICKS(80); //WES: changed to 80 from 100 // Wait >15 msec after power is applied
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND_NOWAIT(ESOS_LCD44780_CMD_WAKE); //wake up command
+		
+		ESOS_TASK_WAIT_TICKS(10);			// must wait 5ms, busy flag not available
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND_NOWAIT(ESOS_LCD44780_CMD_WAKE); //wake up command
+		
+		ESOS_TASK_WAIT_TICKS(1);			// must wait 160us, busy flag not available
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND_NOWAIT(ESOS_LCD44780_CMD_WAKE); //wake up command
+		
+		ESOS_TASK_WAIT_TICKS(1);			// must wait 160us, busy flag not available
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_FUNCTION_SET         |
+											ESOS_LCD44780_CMD_FUNCTION_SET_8_BIT   |
+											ESOS_LCD44780_CMD_FUNCTION_SET_2_LINES ); //set 8-bit & 2-line
+		
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_CUR_DISP_SHIFT); //set cursor
+		
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_DISPLAY_ON_OFF      |
+											ESOS_LCD44780_CMD_DISPLAY_ON_OFF_DISP ); //Entire display on; cursor on (but does this turn cursor on?)
+		
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(ESOS_LCD44780_CMD_ENTRY_MODE_SET |
+											ESOS_LCD44780_CMD_RETURN_HOME    ); //entry mode set
 
-	/*
-	// Send startup sequence from datasheet //TODO: is this needed?
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF);
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_FUNCTION_SET | 0b00011100);
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF |
-                                            ESOS_LCD44780_CMD_DISPLAY_ON_OFF_CUR |
-                                            ESOS_LCD44780_CMD_DISPLAY_ON_OFF_DISP);
-	ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_ENTRY_MODE_SET |
-                                            ESOS_LCD44780_CMD_ENTRY_MODE_SET_INC);
-	*/
+		/*
+		// Send startup sequence from datasheet //TODO: is this needed?
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF);
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_FUNCTION_SET | 0b00011100);
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_DISPLAY_ON_OFF |
+												ESOS_LCD44780_CMD_DISPLAY_ON_OFF_CUR |
+												ESOS_LCD44780_CMD_DISPLAY_ON_OFF_DISP);
+		ESOS_TASK_WAIT_LCD44780_WRITE_COMMAND(  ESOS_LCD44780_CMD_ENTRY_MODE_SET |
+												ESOS_LCD44780_CMD_ENTRY_MODE_SET_INC);
+		*/
+	#endif
 
 	while(TRUE) {
 		static uint8_t i, u8_col, u8_row;
