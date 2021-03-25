@@ -23,8 +23,8 @@ static esos_menu_longmenu_t mm = {
 		"1631"},
 		{ "Set",
 		"LEDs"},
-		{ "",
-		"About..."},
+		{ "About",
+		"..."},
 	},
 };
 
@@ -73,9 +73,6 @@ ESOS_USER_TASK( lcd_example ) {
 			ESOS_TASK_WAIT_ON_SEND_STRING("Ba dun tsst\n");
 			ESOS_TASK_SIGNAL_AVAILABLE_OUT_COMM();
 		}
-		else if(mm.u8_choice == 9){
-		}
-		
 	}
 	ESOS_TASK_END();
 }
