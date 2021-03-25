@@ -6,29 +6,25 @@
 		by the coding standards.
 */
 static esos_menu_longmenu_t mm = {
-	.u8_numitems = 10,
+	.u8_numitems = 8,
 	.u8_choice = 0, //Default
 	.ast_items = {
 		{ "Set",
-		"User"},
+		"wvform"},
+        { "Set",
+        "freq"},
 		{ "Set",
-		"Port"},
+		"ampltd"},
 		{ "Set",
-		"Dest"},
+		"duty"},
+		{ "Read",
+		"LM60"},
+		{ "Read",
+		"1631"},
 		{ "Set",
-		"Temp"},
-		{ "Set",
-		"T-stat"},
-		{ "Self",
-		"Test"},
-		{ "Set",
-		"LEDFP"},
-		{ "Static",
-		"Greet"},
-		{ "Greet",
-		"UART"},
+		"LEDs"},
 		{ "",
-		"Back..."},
+		"About..."},
 	},
 };
 
