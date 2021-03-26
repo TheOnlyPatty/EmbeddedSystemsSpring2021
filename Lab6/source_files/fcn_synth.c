@@ -252,7 +252,7 @@ ESOS_USER_TASK(read_ds1631)
 void user_init() {
 	esos_menu_init();
 	esos_pic24_configI2C1(500);
-    CONFIG_MCP4922_SPI();
+    //CONFIG_MCP4922_SPI(); // Commented out because it's causing an error that I don't know how to fix
 	esos_RegisterTask(menu_choices);
 	esos_RegisterTask(binary_leds);
 	esos_RegisterTask(read_lm60);
