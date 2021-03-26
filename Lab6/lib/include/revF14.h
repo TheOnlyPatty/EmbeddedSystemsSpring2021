@@ -134,35 +134,27 @@
     DELAY_US(1)
 
 // Stuff for MCP4922 (U4)
-#define _RPOUT_SCK1OUT 6 //this is required to remap SCK1OUT
-#define CONFIG_SCK1OUT_TO_RP(Rxy_RP)  _CONFIG_SCK1OUT_TO_RP(Rxy_RP)
-#define _CONFIG_SCK1OUT_TO_RP(Rxy_RP) (_RP##Rxy_RP##R = _RPOUT_SCK1OUT)
+#define CONFIG_SCK_TO_RP(Rxy_RP)  _CONFIG_SCK_TO_RP(Rxy_RP)
+#define _CONFIG_SCK_TO_RP(Rxy_RP) (_RP##Rxy_RP##R = 6)
 
 #define MCP4922_SCK (_LATD5)
-#define MCP4922_SCK_CONFIG()                                                                                           \
-    {                                                                                                                  \
-        CONFIG_RD5_AS_DIG_OUTPUT();                                                                                    \
-    }
 #define MCP4922_SDI (_LATD9)
-#define MCP4922_SDI_CONFIG()                                                                                           \
-    {                                                                                                                  \
-        CONFIG_RD9_AS_DIG_INPUT();                                                                                     \
-    }
 #define MCP4922_SDO (_LATD4)
-#define MCP4922_SDO_CONFIG()                                                                                           \
-    {                                                                                                                  \
-        CONFIG_RD4_AS_DIG_OUTPUT();                                                                                    \
-    }
-#define MCP4922_CS (_LATD0)
-#define MCP4922_CS_CONFIG()                                                                                            \
-    {                                                                                                                  \
-        CONFIG_RD0_AS_DIG_OUTPUT();                                                                                    \
-    }
-#define MCP4922_SHDN (_LATD2)
-#define MCP4922_SHDN_CONFIG()                                                                                          \
-    {                                                                                                                  \
-        /*CONFIG_RD2_AS_DIG_OUTPUT();*/                                                                                  \
-    }
+#define MCP4922_CS (_LATD8)
+
+#define MCP4922_SCK_CONFIG() CONFIG_RD5_AS_DIG_OUTPUT()
+#define MCP4922_SDI_CONFIG() CONFIG_RD9_AS_DIG_INPUT()
+#define MCP4922_SDO_CONFIG() CONFIG_RD4_AS_DIG_OUTPUT()
+#define MCP4922_CS_CONFIG() CONFIG_RD8_AS_DIG_OUTPUT()
+
+#define CONFIG_MCP4922_SPI() \
+    MCP4922_SCK_CONFIG(); \
+    MCP4922_SDI_CONFIG(); \
+    MCP4922_SDO_CONFIG(); \
+    MCP4922_CS_CONFIG(); \
+    CONFIG_SCK_TO_RP(RD5_RP)
+
+
 #define SLAVE_DISABLE() (_LATD0 = 1)
 #define SLAVE_ENABLE() (_LATD0 = 0)
 #define MCP4922_ON() (_LATD2 = 1)
