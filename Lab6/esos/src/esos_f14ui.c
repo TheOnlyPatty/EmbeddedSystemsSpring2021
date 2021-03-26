@@ -471,7 +471,7 @@ ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_IC15) //Interrupt for SW3 press
 // UIF14 INITIALIZATION FUNCTION
 
 void config_esos_uiF14() {
-    __esos_unsafe_PutString(HELLO_MSG);
+    //__esos_unsafe_PutString(HELLO_MSG);
     init_defaults();
     
     CONFIG_LED1();

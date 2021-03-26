@@ -169,11 +169,32 @@ ESOS_USER_TASK(esos_menu_task)
             u8_idlen2 = strlen(pst_menu->entries[1].label);
             pst_entry = &pst_menu->entries[0];
 
+<<<<<<< Updated upstream
             if (pst_entry->min != 0 || pst_entry->max != 0) {
                 // Clamp the value.
                 pst_entry->value = MIN(pst_entry->value, pst_entry->max);
                 pst_entry->value = MAX(pst_entry->value, pst_entry->min);
             }
+=======
+            // TODO. We only handle one value right now.
+            if (u8_idlen2 > 0 && FALSE) {
+                /* esos_lcd_writeString(0, 0, pst_menu->label1); */
+                /* itoa(pst_menu->value1, (char*)au8_intbuffer, 10); */
+                /* esos_lcd_writeString(0, u8_idlen1, (char*)au8_intbuffer); */
+
+                /* esos_lcd_writeString(1, 0, pst_menu->label2); */
+                /* itoa(pst_menu->value1, (char*)au8_intbuffer, 10); */
+                /* esos_lcd_writeString(1, u8_idlen2, (char*)au8_intbuffer); */
+            } 
+			else {
+                pst_entry = &pst_menu->entries[0];
+
+                if (pst_entry->min != 0 || pst_entry->max != 0) {
+                    // Clamp the value.
+                    pst_entry->value = MIN(pst_entry->value, pst_entry->max);
+                    pst_entry->value = MAX(pst_entry->value, pst_entry->min);
+                }
+>>>>>>> Stashed changes
 
             esos_lcd44780_writeString(0, 0, pst_entry->label);
             itoa(pst_entry->value, (char *)au8_intbuffer, 10);

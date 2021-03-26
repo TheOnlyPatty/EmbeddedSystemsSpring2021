@@ -201,4 +201,6 @@
         CONFIG_RB2_AS_ANALOG(); \
         CONFIG_RB3_AS_ANALOG()
 
+#define DS1631_ADDRESS 0x90 // Address for I2C temp sensor (breadboard thing for lab 6)
+
 #endif // closes the #ifndef block
