@@ -187,7 +187,7 @@ ESOS_USER_TASK(update_lm60)
 void user_init() {
 	esos_menu_init();
 	esos_pic24_configI2C1(500);
-	//configSPI1();
+    CONFIG_MCP4922_SPI();
 	esos_RegisterTask(menu_choices);
 	esos_RegisterTask(binary_leds);
 }
