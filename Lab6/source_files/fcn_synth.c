@@ -17,7 +17,7 @@ static esos_menu_longmenu_t main_menu = {
 	.u8_numitems = 8,
 	.u8_choice = 0, //Default
 	.ast_items = {
-		{ "Set", "wvform", 0 },
+		{ "Set","wvform", 0 },
         { "Set", "freq", 0 },
 		{ "Set", "ampltd", 0 },
 		{ "Set", "duty", 1 },
@@ -69,7 +69,7 @@ static esos_menu_staticmenu_t greet = {
 static esos_menu_staticmenu_t about = {
     .u8_numlines = 2,
     .u8_currentline = 0,
-	.lines = {{"scons"}, {"sucks"}}, // Maybe too long? nope
+	.lines = {{"scons"}, {"sucks"}},
 };
 
 ESOS_USER_TASK(menu_choices) {

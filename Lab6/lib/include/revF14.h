@@ -161,10 +161,8 @@
 #define MCP4922_OFF() (_LATD2 = 0)
 
 // configure Analog Peripherals - pot and therm
-#define ANALOG_CONFIG()                                                                                                \
-    {                                                                                                                  \
-        CONFIG_RB2_AS_ANALOG();                                                                                        \
-        CONFIG_RB3_AS_ANALOG();                                                                                        \
-    }
+#define ANALOG_CONFIG() \
+        CONFIG_RB2_AS_ANALOG(); \
+        CONFIG_RB3_AS_ANALOG()
 
 #endif // closes the #ifndef block
