@@ -192,8 +192,8 @@
     SPI1STATbits.SPIEN = 1
 
 
-#define SLAVE_DISABLE() (_LATD0 = 1)
-#define SLAVE_ENABLE() (_LATD0 = 0)
+#define SLAVE_DISABLE() (_LATD8 = 1)
+#define SLAVE_ENABLE() (_LATD8 = 0)
 #define MCP4922_ON() (_LATD2 = 1)
 #define MCP4922_OFF() (_LATD2 = 0)
 

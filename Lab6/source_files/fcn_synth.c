@@ -18,6 +18,7 @@ static esos_menu_longmenu_t main_menu = {
 	.u8_choice = 0, //Default
 	.ast_items = {
 		{ "Set","wvform", 0 },
+        { "Set", "wvform", 0 },
         { "Set", "freq", 0 },
 		{ "Set", "ampltd", 0 },
 		{ "Set", "duty", 1 },
@@ -25,6 +26,12 @@ static esos_menu_longmenu_t main_menu = {
 		{ "Read", "1631", 0 },
 		{ "Set", "LEDs", 0 },
 		{ "About", "...", 0 },
+        { "Set", "ampltd", 0 },
+        { "Set", "duty", 1 },
+        { "Read", "LM60", 0 },
+        { "Read", "1631", 0 },
+        { "Set", "LEDs", 0 },
+        { "About", "...", 0 },
 	},
 };
 
@@ -69,35 +76,72 @@ static esos_menu_staticmenu_t greet = {
 };
 */
 
+static esos_menu_longmenu_t wvform = {
+    .u8_numitems = 4,
+    .u8_choice = 0,
+    .ast_items = { { "Select", "Tri", 0 },
+                   { "Select", "Square", 0 },
+                   { "Select", "Sine", 0 },
+                   { "Select", "Custom", 0 } },
+};
+
+static esos_menu_entry_t freq = {
+    .entries[0].label = "Freq = ",
+    .entries[0].value = 1000,
+    .entries[0].min = 64,
+    .entries[0].max = 2047,
+};
+
+static esos_menu_entry_t ampl = {
+    .entries[0].label = "Ampl = ",
+    .entries[0].value = 30,
+    .entries[0].min = 0,
+    .entries[0].max = 30,
+};
+
+static esos_menu_entry_t duty = {
+    .entries[0].label = "Duty = ",
+    .entries[0].value = 50,
+    .entries[0].min = 0,
+    .entries[0].max = 100,
+};
+
 static esos_menu_staticmenu_t about = {
     .u8_numlines = 2,
     .u8_currentline = 0,
-	.lines = {{"scons"}, {"sucks"}},
+    .lines = { { "Scons" }, { "Sucks <3" } },
 };
 
 ESOS_USER_TASK(menu_choices) {
 	ESOS_TASK_BEGIN();
 
 	while(TRUE) {
-		ESOS_TASK_WAIT_ESOS_MENU_LONGMENU(main_menu);
-		/*
-		// Waveform
-		if (main_menu.u8_choice == 0) {
-			
-		}
-		// Frequency
-		else if (main_menu.u8_choice == 1) {
-			
-		}
-		// Amplitude
-		else if (main_menu.u8_choice == 2) {
-			
-		}
-		// Duty Cycle
-		else if (main_menu.u8_choice == 3) {
-			
-		}
-		*/
+        
+        //Show or hide duty bsaed on if square wave is chosen
+        if (wvform.u8_choice == 1) main_menu.ast_items[3].b_hidden = FALSE;
+        else main_menu.ast_items[3].b_hidden = TRUE;
+
+        ESOS_TASK_WAIT_ESOS_MENU_LONGMENU(main_menu);
+        
+        //Set waveform type
+        if (main_menu.u8_choice == 0) {
+            ESOS_TASK_WAIT_ESOS_MENU_LONGMENU(wvform);
+            ESOS_ALLOCATE_CHILD_TASK(update_hdl);
+            ESOS_TASK_SPAWN_AND_WAIT(update_hdl, update_wvform, wvform.u8_choice, duty.entries[0].value, ampl.entries[0].value);
+        //Set waveform frequency
+        } else if (main_menu.u8_choice == 1) {
+            ESOS_TASK_WAIT_ESOS_MENU_ENTRY(freq);
+            PR4 = FCY / 8 / 128 / freq.entries[0].value;
+            ESOS_TASK_WAIT_ON_SEND_UINT32_AS_HEX_STRING(PR4);
+            ESOS_TASK_WAIT_ON_SEND_UINT8('\n');
+        //Set waveform amplitude
+        } else if (main_menu.u8_choice == 2) {
+            ESOS_TASK_WAIT_ESOS_MENU_ENTRY(ampl);
+            ESOS_TASK_SPAWN_AND_WAIT(update_hdl, update_wvform, wvform.u8_choice, duty.entries[0].value, ampl.entries[0].value);
+        //Set square wave duty cycle
+        } else if (main_menu.u8_choice == 3) {
+            ESOS_TASK_WAIT_ESOS_MENU_ENTRY(duty);
+            ESOS_TASK_SPAWN_AND_WAIT(update_hdl, update_wvform, wvform.u8_choice, duty.entries[0].value, ampl.entries[0].value);
 		// LM60 (Temp sensor on board)
 		if (main_menu.u8_choice == 4) {
 			b_updating_lm60 = 1;
@@ -155,6 +199,116 @@ ESOS_USER_TASK(binary_leds) {
 	ESOS_TASK_END();
 }
 
+ESOS_USER_TASK(read_lm60)
+void writeSPI(uint16_t *pu16_out, uint16_t *pu16_in, uint16_t u16_cnt) {
+    static uint16_t *pu16_inPtr;
+    static uint16_t *pu16_outPtr;
+    static uint16_t u16_tempCnt, u16_i;
+    static uint8_t u8_isReading, u8_isWriting;
+    uint16_t u16_scratch;
+    pu16_outPtr = pu16_out;
+    pu16_inPtr = pu16_in;
+    u16_tempCnt = u16_cnt;
+
+    if (pu16_outPtr == NULLPTR)
+        u8_isWriting = FALSE;
+    else
+        u8_isWriting = TRUE;
+
+    if (pu16_inPtr == NULLPTR)
+        u8_isReading = FALSE;
+    else
+        u8_isReading = TRUE;
+
+    if (SPI1STATbits.SPIROV) SPI1STATbits.SPIROV = 0;
+    _SPI1IF = 0;
+    u16_scratch = SPI1BUF;
+    for (u16_i = 0; u16_i < u16_tempCnt; u16_i++) {
+        if (u8_isWriting) {
+            SPI1BUF = *pu16_outPtr;
+            pu16_outPtr++;
+        } else {
+            SPI1BUF = 0;
+        }
+        while (SPI1STAT & SPI_TX_BUFFER_FULL);
+
+        while (!(SPI1STAT & SPI_RX_BUFFER_FULL));
+        
+        u16_scratch = SPI1BUF;
+        if (u8_isReading) *pu16_inPtr++ = u16_scratch;
+    }
+}
+
+void write_DAC(uint16_t u16_data) {
+    u16_data = 0x3000 | (u16_data >> 4);
+    SLAVE_ENABLE();
+    writeSPI(&u16_data, NULLPTR, 1);
+    SLAVE_DISABLE();
+}
+
+ESOS_USER_INTERRUPT(ESOS_IRQ_PIC24_T4) {
+    write_DAC(wvform_data[u8_wvform_idx]);
+    u8_wvform_idx = ++u8_wvform_idx % 128;
+    ESOS_MARK_PIC24_USER_INTERRUPT_SERVICED(ESOS_IRQ_PIC24_T4);
+}
+
+ESOS_CHILD_TASK(update_wvform, uint8_t u8_type, uint8_t u8_duty, uint8_t u8_ampl) {
+    ESOS_TASK_BEGIN();
+    static uint8_t u16_addr;
+    static uint16_t u16_scaledData;
+    static uint8_t u8_rawData;
+    static uint16_t i;
+    static uint8_t u8_currAmplitude;
+    u8_currAmplitude = u8_ampl * UINT8_MAX / 30;
+    
+    if (u8_type == TRI_WVFORM) {
+        for (i = 0; i < 64; i++) {
+            u8_rawData = i * 2;
+            u16_scaledData = u8_rawData * u8_currAmplitude;
+            wvform_data[i] = u16_scaledData * 2;
+        }
+        for (i = 64; i > 0; i--) {
+            u8_rawData = i * 2;
+            u16_scaledData = u8_rawData * u8_currAmplitude;
+            wvform_data[64 + (64 - i)] = u16_scaledData * 2;
+        }
+    }
+    
+    if (u8_type == SQUARE_WVFORM) {
+        u8_duty = 128 * u8_duty / 100;
+        for (i = 0; i < 128; i++) {
+            u8_rawData = (i < u8_duty) ? 255 : 0;
+            u16_scaledData = u8_rawData * u8_currAmplitude;
+            wvform_data[i] = u16_scaledData;
+        }
+    }
+
+    if (u8_type == SINE_WVFORM || u8_type == USER_WVFORM) {
+        if (u8_type == SINE_WVFORM) {
+            u16_addr = SINE_WVFORM_ADDR;
+        } else {
+            u16_addr = USER_WVFORM_ADDR;
+        }
+        ESOS_DISABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_T4);
+        for (i = 0; i < 128; i++) {
+            ESOS_TASK_WAIT_ON_AVAILABLE_I2C();
+            ESOS_TASK_WAIT_ON_WRITE1I2C1(AT24C02D_ADDR, u16_addr + i);
+            ESOS_TASK_WAIT_ON_READ1I2C1(AT24C02D_ADDR, u8_rawData);
+            ESOS_TASK_SIGNAL_AVAILABLE_I2C();
+            ESOS_TASK_WAIT_TICKS(1);
+            uint16_t a = u8_rawData;
+            uint16_t b = u8_currAmplitude;
+            u16_scaledData = a * b;
+            wvform_data[i] = u16_scaledData;
+        }
+        ESOS_ENABLE_PIC24_USER_INTERRUPT(ESOS_IRQ_PIC24_T4);
+    }
+    ESOS_TASK_YIELD();
+    ESOS_TASK_END();
+}
+
+/* Small error relating to converting to string
+ESOS_USER_TASK(update_lm60)
 ESOS_USER_TASK(read_lm60)
 {
     static uint16_t pu16_data; // data coming from sensor
