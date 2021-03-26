@@ -17,15 +17,8 @@ static esos_menu_longmenu_t main_menu = {
 	.u8_numitems = 8,
 	.u8_choice = 0, //Default
 	.ast_items = {
-		{ "Set","wvform", 0 },
         { "Set", "wvform", 0 },
         { "Set", "freq", 0 },
-		{ "Set", "ampltd", 0 },
-		{ "Set", "duty", 1 },
-		{ "Read", "LM60", 0 },
-		{ "Read", "1631", 0 },
-		{ "Set", "LEDs", 0 },
-		{ "About", "...", 0 },
         { "Set", "ampltd", 0 },
         { "Set", "duty", 1 },
         { "Read", "LM60", 0 },
@@ -163,7 +156,7 @@ ESOS_USER_TASK(menu_choices) {
 			ESOS_TASK_WAIT_ESOS_MENU_STATICMENU(about);
 		}
 	}
-
+    }
 	ESOS_TASK_END();
 }
 
@@ -199,7 +192,9 @@ ESOS_USER_TASK(binary_leds) {
 	ESOS_TASK_END();
 }
 
-ESOS_USER_TASK(read_lm60)
+
+//ESOS_USER_TASK(read_lm60)
+
 void writeSPI(uint16_t *pu16_out, uint16_t *pu16_in, uint16_t u16_cnt) {
     static uint16_t *pu16_inPtr;
     static uint16_t *pu16_outPtr;
@@ -307,10 +302,7 @@ ESOS_CHILD_TASK(update_wvform, uint8_t u8_type, uint8_t u8_duty, uint8_t u8_ampl
     ESOS_TASK_END();
 }
 
-/* Small error relating to converting to string
-ESOS_USER_TASK(update_lm60)
-ESOS_USER_TASK(read_lm60)
-{
+ESOS_USER_TASK(read_lm60) {
     static uint16_t pu16_data; // data coming from sensor
     static uint32_t pu32_data; // final (data together)
 	static uint32_t temp32_int; // integer part (part before decimal)
@@ -357,8 +349,7 @@ ESOS_USER_TASK(read_lm60)
     ESOS_TASK_END();
 }
 
-ESOS_USER_TASK(read_ds1631)
-{
+ESOS_USER_TASK(read_ds1631) {
     ESOS_TASK_BEGIN();
 
     ESOS_TASK_WAIT_ON_AVAILABLE_I2C();
@@ -406,7 +397,7 @@ ESOS_USER_TASK(read_ds1631)
 void user_init() {
 	esos_menu_init();
 	esos_pic24_configI2C1(500);
-    //CONFIG_MCP4922_SPI(); // Commented out because it's causing an error that I don't know how to fix
+    CONFIG_MCP4922_SPI(); 
 	esos_RegisterTask(menu_choices);
 	esos_RegisterTask(binary_leds);
 	esos_RegisterTask(read_lm60);
