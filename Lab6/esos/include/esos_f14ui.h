@@ -35,6 +35,7 @@ typedef struct {
     uint16_t u16_noVelocity; // Threshold for no RPG movement
     uint16_t u16_medVelocity; // Threshold for medium speed RPG movement
     uint16_t u16_fastVelocity; // Threshold for high speed RPG movement
+    int16_t i16_RPGVelocity; // Current RPG Velocity
     
     BOOL b_LED1On;
     uint16_t u16_LED1FlashPeriod;    
@@ -64,7 +65,7 @@ typedef struct {
 
  // I don't think these are needed for Lab 3
 int16_t esos_uiF14_getRPGCounter_i16(void);
-void esos_ui_setRPGCounter_i16(uint16_t);
+void esos_uiF14_setRPGCounter_i16(int16_t);
 /*
 uint16_t esos_uiF14_getLastRPGCounter (void);
 void esos_ui_setLastRPGCounter (uint16_t);
@@ -115,7 +116,7 @@ inline void esos_uiF14_turnGreenLEDOff (void);
 inline void esos_uiF14_turnYellowLEDOn (void);
 inline void esos_uiF14_turnYellowLEDOff (void);
 
-inline uint16_t esos_uiF14_getRPGValue_u16 (void);
+inline int16_t esos_uiF14_getRPGValue_i16 (void);
 inline void esos_uiF14_setRPG_noVelocity (uint16_t);
 inline uint16_t esos_uiF14_getRPGSlowThreshold (void);
 inline void esos_uiF14_setRPG_medVelocity (uint16_t);

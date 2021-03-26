@@ -8,6 +8,7 @@
 typedef struct {
 	char ac_line1[8];
 	char ac_line2[8];
+	BOOL b_hidden;
 } esos_menu_longmenu_item_t;
 
 /* 
@@ -57,6 +58,15 @@ typedef struct {
 	esos_menu_entry_item_t entries[2];
 } esos_menu_entry_t;
 
+typedef struct {
+    uint32_t value;
+    uint16_t min;
+    uint16_t max;
+    uint8_t div;
+    uint8_t type;
+    char lines[][8];
+} esos_menu_slider_bar_t;
+
 // Call this to initialize the cherrymenu subsystem.
 void esos_menu_init(void);
 
@@ -86,6 +96,12 @@ void esos_menu_init(void);
 // Prototypes and definitions below this line are not part of the stable
 // API and should not be used by clients.  Here be dragons.
 
+#define ESOS_TASK_WAIT_ESOS_MENU_SLIDER_BAR(structure) do { \
+	esos_menu_slider_bar_t *ps_menu = &structure; \
+	__esos_menu_conf.e_menutype = SLIDER_BAR; \
+	__esos_menu_conf.pv_data = ps_menu; \
+	ESOS_TASK_WAIT_UNTIL(__esos_menu_conf.e_menutype == NONE); \
+} while (0)
 
 /*Notes: Since *pv_data is void, the value pv_data can point to any
   of our menu types.
@@ -96,6 +112,7 @@ typedef struct {
 		LONGMENU,
 		STATICMENU,
 		ENTRY,
+		SLIDER_BAR
 	} e_menutype;
 	void *pv_data;
 } __esos_menu_conf_t;

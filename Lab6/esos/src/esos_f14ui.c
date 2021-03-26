@@ -169,7 +169,7 @@ inline void esos_uiF14_flashLED3( uint16_t u16_period) {
 
     // PUBLIC RPG FUNCTIONS
 
-inline uint16_t esos_uiF14_getRPGValue_u16 ( void ) {
+inline int16_t esos_uiF14_getRPGValue_i16 ( void ) {
     return _st_esos_uiF14Data.i16_RPGCounter;
 }
 inline BOOL esos_uiF14_isRPGTurning ( void ) {
@@ -219,10 +219,18 @@ inline int16_t esos_uiF14_getRPGCounter_i16(void) {
     return _st_esos_uiF14Data.i16_RPGCounter;
 }
 
-inline void esos_ui_setRPGCounter_i16(uint16_t new_counter) {
+inline void esos_uiF14_setRPGCounter_i16(int16_t new_counter) {
     _st_esos_uiF14Data.i16_RPGCounter = new_counter;
 }
 
+inline int16_t esos_uiF14_getRPGVelocity_i16(void) {
+    return _st_esos_uiF14Data.i16_RPGVelocity;
+}
+
+inline void esos_uiF14_resetRPG(void) {
+    _st_esos_uiF14Data.i16_RPGCounter = 0;
+    _st_esos_uiF14Data.i16_RPGVelocity = 0;
+}
 
 void init_defaults( void ) { // Set default values
     _st_esos_uiF14Data.b_SW1Pressed = FALSE;
@@ -243,6 +251,7 @@ void init_defaults( void ) { // Set default values
     _st_esos_uiF14Data.b_RPGMoving_fast = FALSE;
     _st_esos_uiF14Data.b_RPGTurning_CW = FALSE;
     _st_esos_uiF14Data.b_RPGTurning_CCW = FALSE;
+    _st_esos_uiF14Data.i16_RPGVelocity = 0;
 
     _st_esos_uiF14Data.u16_noVelocity = 400;
     _st_esos_uiF14Data.u16_medVelocity = 150;
@@ -262,6 +271,8 @@ void init_defaults( void ) { // Set default values
 
     return;
 }
+
+static volatile int32_t i32_average_velocity = 0;
 
 ESOS_USER_TASK( __esos_uiF14_task ) {
 
@@ -284,6 +295,9 @@ ESOS_USER_TASK( __esos_uiF14_task ) {
 
             // New method for getting last period
             _st_esos_uiF14Data.u16_RPGLastPeriod_ms = esos_GetSystemTick();
+
+            i32_average_velocity = (3 * _st_esos_uiF14Data.u16_RPGPeriod_ms / 8) + (5 * i32_average_velocity / 8); // Moving exponential average
+            _st_esos_uiF14Data.i16_RPGVelocity = i32_average_velocity;
 
             // Figure out what speed the RPG is moving (slow, medium, fast)
             //Slow
